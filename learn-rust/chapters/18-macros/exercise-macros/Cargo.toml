@@ -1,0 +1,21 @@
+[package]
+name = "exercise-macros"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+# Chapter 28: procedural macros. A proc-macro crate is compiled for the
+# *host* and runs inside the compiler; it turns tokens into tokens.
+[lib]
+proc-macro = true
+
+[dependencies]
+syn = { workspace = true }
+quote = { workspace = true }
+proc-macro2 = { workspace = true }
+
+[lints.rust]
+unsafe_code = "forbid"
+
+[lints.clippy]
+all = { level = "warn", priority = -1 }

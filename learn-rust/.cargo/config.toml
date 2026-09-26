@@ -1,0 +1,2 @@
+[alias]
+rl = "run -q -p rl --"

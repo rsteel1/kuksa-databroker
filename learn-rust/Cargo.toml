@@ -1,0 +1,42 @@
+# Standalone workspace for the kuksa-databroker Rust course.
+# It is deliberately NOT part of the repository's main workspace.
+
+[workspace]
+resolver = "2"
+members = [
+    "tooling/exercises",
+    "tooling/solutions",
+    "tooling/rl",
+    "chapters/18-macros/exercise-macros",
+    "chapters/18-macros/solution-macros",
+]
+
+[workspace.dependencies]
+tokio = { version = "1.46.1", features = ["full", "test-util"] }
+tokio-stream = { version = "0.1.8", features = ["sync", "net"] }
+futures = "0.3.28"
+async-trait = "0.1.82"
+async-stream = "0.3"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+regex = "1.7.1"
+glob-match = "0.2.1"
+indexmap = "2.8.0"
+uuid = { version = "1.4.1", features = ["v4"] }
+thiserror = "1.0.47"
+anyhow = "1.0"
+clap = { version = "4.2", features = ["env", "derive"] }
+tracing = "0.1.34"
+tracing-subscriber = { version = "0.3.20", features = ["env-filter"] }
+tonic = { version = "0.14.0" }
+prost = "0.14"
+prost-types = "0.14"
+tower = { version = "0.5", features = ["util"] }
+bytes = "1"
+pin-project-lite = "0.2"
+proptest = "1"
+syn = { version = "2", features = ["full"] }
+quote = "1"
+proc-macro2 = "1"
+databroker = { path = "../databroker", default-features = false }
+databroker-proto = { path = "../databroker-proto" }

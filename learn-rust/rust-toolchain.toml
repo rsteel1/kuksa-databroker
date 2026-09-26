@@ -1,0 +1,5 @@
+# Pin the toolchain the course was verified with, so compiler messages and
+# clippy lints match the exercises. rustup installs it automatically.
+[toolchain]
+channel = "1.96.0"
+components = ["clippy", "rustfmt", "rust-src"]

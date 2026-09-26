@@ -1,0 +1,14 @@
+[package]
+name = "rl"
+version = "0.1.0"
+edition = "2021"
+publish = false
+description = "Tiny rustlings-style runner for the kuksa-databroker course"
+
+[dependencies]
+
+[lints.rust]
+unsafe_code = "forbid"
+
+[lints.clippy]
+all = { level = "warn", priority = -1 }
