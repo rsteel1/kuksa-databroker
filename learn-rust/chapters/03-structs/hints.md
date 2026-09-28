@@ -79,3 +79,41 @@ Reject an empty segment, and reject any char that isn't
 `Option<&str>`; it can't be `None` for a valid path, so
 `.expect("valid paths are non-empty")` is appropriate — the invariant is
 guaranteed by `parse`.
+
+## c03_e07_build_entry_stats
+No bug to fix — design the struct and write every method from the tests.
+
+Fields: something like `path: String, count: u32, sum: f64, min: f64,
+max: f64`.
+
+`new`: `count: 0` and zero for the rest; `min`/`max` don't matter yet
+because `record` will set them on the first call.
+
+`record`: on the very first reading (`self.count == 0`) set `min` and
+`max` to `value` directly; otherwise `self.min = self.min.min(value)` and
+`self.max = self.max.max(value)`. Always add to `sum` and increment
+`count`.
+
+`range`/`average`: guard `count == 0` and return `0.0`; otherwise
+`max - min`, and `sum / f64::from(count)`.
+
+`into_summary` takes `self` (it consumes the tracker): build the string
+with `format!("{}: n={} min={} max={} avg={:.2}", ...)`.
+
+## c03_e08_review_signal_registry
+Compare each method's doc comment against what it actually does.
+
+Bug 1 (`update`): `self.entries.iter().find(...).cloned()` makes an
+independent copy of the matching `Entry`. Mutating `entry.value` on that
+copy never touches `self.entries`. Use `iter_mut()` and find a `&mut
+Entry` to mutate directly.
+
+Bug 2 (`nth_most_recent`): for `n = 0` (the most recent entry),
+`self.entries.len() - n` is `len()`, one past the last valid index — the
+last element is at `len() - 1`. In general the `n`th-from-the-end index
+is `len() - 1 - n`.
+
+Bug 3 (`register`): `let next_id = id + 1;` declares a brand new local
+that shadows nothing useful and is thrown away at the end of the
+function; `self.next_id` is never touched, so it stays `0` forever and
+every registration gets id `0`. Write `self.next_id = id + 1;` instead.

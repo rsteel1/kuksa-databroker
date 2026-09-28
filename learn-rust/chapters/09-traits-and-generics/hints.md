@@ -82,3 +82,26 @@ iterator borrows from `self`.
 3. `self.providers.iter().find(|p| p.is_available() && p.handles(id))` gives an
    `Option<&Arc<dyn ...>>`; `.ok_or_else(|| format!(...))?` then `.actuate(id, value)`.
 4. `actuate_static`: `if provider.handles(id) { provider.actuate(id, value) } else { Err(...) }`.
+
+## c09_e08_build_provider_chain
+`StaticProvider::read`: compare `path == self.path`; `MapProvider::read`:
+`self.values.get(path).cloned()`. `register` pushes `Box::new(provider)`.
+`read_first` is `self.providers.iter().find_map(|p| p.read(path))` — that's
+the whole "try each until one answers" idea in one adaptor. `read_all` is the
+same shape with `filter_map` and `.collect()` instead of `find_map`. The
+`From`/`TryFrom` impls are a `match` each; `describe` is one `format!` line.
+If you reach for a `for` loop with an index anywhere here, there's a shorter
+iterator-adaptor way — that's the point of the exercise.
+
+## c09_e09_review_reading_conversions
+Three separate bugs, each in a different `impl`:
+- The `From<RawSample>` impl: `as i16` truncates/wraps instead of clamping.
+  Clamp in the wider `i32` first (`raw.millivolts.clamp(i16::MIN as i32,
+  i16::MAX as i32)`), then cast to `i16` — the cast is now lossless because
+  the value is already in range.
+- The `Ord` impl: re-read the doc comment above it. It says "voltage first,
+  ties broken by id" but the body only looks at `id`. Fix: compare
+  `millivolts` first with `.then(...)` chaining to `id` for the tie-break.
+- `clamp_all`: one of the two `if`s has the wrong comparison operator. Walk
+  through `clamp_all(&mut [5], 0, 10)` by hand with the shipped code and
+  see which branch fires when it shouldn't.

@@ -313,6 +313,8 @@ even through `dyn`.
 | `c09_e05_generic_bounds_and_where` | bounds, `where`, bounds on impl blocks |
 | `c09_e06_impl_trait_args` | `impl Into`/`AsRef`/`IntoIterator` args, `-> impl Iterator` |
 | `c09_e07_trait_objects_dyn` | `dyn`, `Arc<dyn>`, E0038 and `where Self: Sized` |
+| `c09_e08_build_provider_chain` | build: a provider chain over `dyn ValueProvider`, plus `From`/`TryFrom` |
+| `c09_e09_review_reading_conversions` | review: find and fix 3 bugs in conversion/ordering/generic code |
 
 ## Further reading
 

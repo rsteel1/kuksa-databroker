@@ -302,6 +302,8 @@ examples — it's one of the best learning tools Rust has.
 | `c01_e03_functions` | The trailing-semicolon bug; write small functions |
 | `c01_e04_control_flow` | `if` as an expression, `for`/`break`, `loop` with a value, `while` |
 | `c01_e05_tuples_arrays_shadowing` | Shadowing instead of `mut`; return tuples; destructure |
+| `c01_e06_build_datapoint_stats` | Build: clamp/scale/count/average from a spec, no overflow |
+| `c01_e07_review_calibration` | Review: find 3 planted bugs (truncating cast, shadowing, off-by-one) |
 
 ## Further reading
 

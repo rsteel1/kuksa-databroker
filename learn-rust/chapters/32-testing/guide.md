@@ -429,6 +429,7 @@ process, globals and environment variables. Anything global (env vars,
 | `c32_e04_test_builders` | A `&mut Self` scenario builder driving a table of cases |
 | `c32_e05_property_testing` | Write a proptest strategy that reaches the corners; let it find two codec bugs |
 | `c32_e06_checkpoint_part5` | **Checkpoint:** write a test suite that catches two subtly broken filter managers |
+| `c32_e07_review_flawed_tests` | Review: 3 planted bugs in the TESTS — a missing assertion, an overbroad `should_panic`, a wrong expected value |
 
 ## Further reading
 

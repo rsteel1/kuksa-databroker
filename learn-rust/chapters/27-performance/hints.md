@@ -88,3 +88,23 @@ Strategy, not code:
 - Update existing entries through `get_mut(&str)`; only unknown paths need
   `Arc::from(path)`.
 - Bump the version with `Release` and read it with `Acquire` (chapter 25).
+
+## c27_e07_review_hot_loop_costs
+Two independent bugs, each caught by counting operations rather than
+timing anything.
+
+Bug 1: `dedup_signal_ids` calls `result.contains(id)` inside the loop,
+which walks the (growing) output every time — O(n) work per input, O(n^2)
+overall, and each check is a `CountedId::eq` call the test is watching.
+Replace `result` + `.contains` with a `HashSet<u64>` tracking the raw ids
+you've already seen (`seen.insert(id.0)` returns `false` for a repeat);
+that membership check never calls `CountedId::eq` at all, so the
+comparison count drops to (near) zero.
+
+Bug 2: `apply_overrides` clones the whole current `result` into `fresh` on
+every iteration just to overwrite one element, then throws the old
+`result` away. Every override after the first reclones everything the
+previous overrides already wrote. Just index into `result` directly:
+`result[*idx] = value.clone();` — the one clone of `value` is unavoidable
+(you need an owned `String` in the vector), but the whole-buffer reclone
+is not.

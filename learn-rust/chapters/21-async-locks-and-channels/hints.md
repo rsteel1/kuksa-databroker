@@ -73,3 +73,17 @@ already matches).
 `latest`: `*rx.borrow()`. `next_change`: `rx.changed().await.ok()?;` then
 `Some(*rx.borrow_and_update())`. `wait_until_above`:
 `rx.wait_for(|v| *v > limit).await.ok().map(|v| *v)`.
+
+## c21_e09_review_shutdown_and_joinhandle
+Bug 1: `tokio::spawn(...)` returns a `JoinHandle`, and the exercise's
+`spawn_worker` just lets that value fall off the end of the expression —
+dropping it detaches the task. A dropped handle keeps running the task in
+the background, but nothing can ever `.await` it to know when it's done.
+Give `Worker` a `handle: JoinHandle<()>` field, keep what `tokio::spawn`
+returns, and `.await` it inside `shutdown`.
+
+Bug 2: `select!` can see the shutdown signal become ready before it
+happens to poll the `recv()` branch again, so items already sitting in
+the channel never get pulled out through the normal path. Once you're
+about to break out on shutdown, drain whatever's left with a
+`while let Ok(item) = rx.try_recv() { ... }` loop first.

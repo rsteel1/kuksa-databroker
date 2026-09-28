@@ -332,6 +332,7 @@ line numbers are for Rust 1.96):
 | c19_e04_process_and_env | `Command`: capture, exit status, stdin pipes, per-child env; testable env config; exit codes |
 | c19_e05_cli_program_end_to_end | `vss-grep`: argument parsing, input selection, grep-style exit codes, all tested without a terminal |
 | c19_e06_checkpoint_part2 | **Checkpoint**: config loader with a macro, `FromStr`, a typestate builder and layered errors |
+| c19_e07_review_line_reader | Review: fix a one-shot partial read, a line buffer never cleared, and a dropped final unterminated line |
 
 ## Further reading
 

@@ -72,3 +72,28 @@ Remove the lifetime parameter. Replace `by_path` with
 entry, and inserts `(path.to_string(), index)`. `entry_by_path` looks up the
 index and calls `self.entry(id)`. `set_value` indexes `self.entries[id]`.
 `#[derive(Default)]` gives you `new`.
+
+## c16_e07_build_window_visitor
+`for_each_window`: `for window in data.windows(size) { f(window); }` — the
+`for<'s>` bound is already satisfied by any ordinary closure body; you
+don't write `for<'s>` yourself anywhere, it's just what makes calling `f`
+with a fresh, shorter-lived slice on every iteration type-check.
+`PathLogger::new`: `PathLogger { label: label.into(), entries: Vec::new() }`.
+`make_logger`: clone the label into a local (`let label =
+self.label.clone();`) BEFORE building the closure, then `move |path: &str|
+format!("{label}: {path}")`. Capturing `&self.label` instead would tie the
+closure to `self`'s lifetime and fail the `'static` bound.
+
+## c16_e08_review_static_and_reborrow_bugs
+Three independent bugs:
+- `Cache::update`: always `push`es. Look for an existing entry first
+  (`iter_mut().find(...)`) and overwrite its value in place; only push if
+  none was found.
+- `make_snapshots`: every closure holds `Rc::clone(&counter)` — the SAME
+  cell — so they all see the counter's final value once the loop ends.
+  Copy the current value out of the `RefCell` (`*counter.borrow()`) into a
+  plain `i32` before building the closure, and capture that instead.
+- `quadruple`: `v.clone()` operates on a throwaway copy. Just call
+  `double_in_place(v)` twice, directly — passing a `&mut` reference to a
+  function reborrows it implicitly, so `v` is still yours to use again
+  right after.

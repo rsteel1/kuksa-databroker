@@ -308,6 +308,7 @@ Things the real broker has that the mini one doesn't: providers
 | `c35_e04_subscriptions_notify` | `Arc<RwLock<..>>` state, intersection-based notify, write→downgrade→notify |
 | `c35_e05_subscribe_stream` | broadcast → `Stream`, lag → `None`, buffer rules, a race you can fix |
 | `c35_e06_housekeeping` | interval task with `select!`, RAII-driven cleanup, graceful shutdown |
+| `c35_e07_review_validate_diff_apply` | Review: 3 planted bugs — an inclusive min/max boundary, a diff that compares timestamps, a tri-state match that drops "clear the target" |
 
 ## Further reading
 

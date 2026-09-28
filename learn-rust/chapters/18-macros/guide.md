@@ -468,6 +468,7 @@ In the wild (sources on disk under
 | c18_e04_macros_that_generate_items | One table generates impls for many types, an enum, `Display`/`FromStr`, and tests |
 | c18_e05_reading_derive_output | Write by hand what `derive(Debug, Clone, PartialEq, Default)` generates; a bound-free `Clone`; a validating `Deserialize` |
 | c18_e06_write_a_derive_macro | A real `#[derive(SignalNames)]` with `syn`/`quote`, helper attributes, generics and proper errors |
+| c18_e07_review_macro_hygiene | Review: fix double-evaluation of a macro argument, a repetition reusing the wrong metavariable, and an off-by-one base case |
 
 ## Further reading
 

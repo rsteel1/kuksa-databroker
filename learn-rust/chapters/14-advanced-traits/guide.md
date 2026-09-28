@@ -403,6 +403,8 @@ moved, search for the item name.
 | `c14_e06_any_downcast` | Downcast values and find plugins by concrete type (trait upcasting) |
 | `c14_e07_sealed_and_marker_traits` | `Rc` vs `Arc` for auto traits, a sealed trait, a marker bound |
 | `c14_e08_typestate_phantomdata` | A subscribe builder where `build()` exists only after a signal is added |
+| `c14_e09_build_typed_cell` | build: a sealed-trait `dyn Any` cell plus a find-by-type helper |
+| `c14_e10_review_trait_bugs` | review: find and fix 3 bugs — inherent-method shadowing, a broken `Borrow` impl, wrong downcast type |
 
 ## Further reading
 

@@ -293,6 +293,8 @@ you exactly what it may do to the value.
 | `c03_e04_derives` | Choose derives; understand why `f64` blocks `Eq`/`Hash` |
 | `c03_e05_struct_update_syntax` | Partial updates with `..Default::default()` |
 | `c03_e06_validated_newtype` | `SignalId` newtype; a `VssPath` that can only be valid |
+| `c03_e07_build_entry_stats` | Build: a running-stats struct and its methods from a spec |
+| `c03_e08_review_signal_registry` | Review: find 3 planted bugs (clone hides a mutation, off-by-one index, shadowed counter) |
 
 ## Further reading
 

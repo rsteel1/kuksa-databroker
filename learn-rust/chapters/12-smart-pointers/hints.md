@@ -69,3 +69,24 @@ push `Rc::clone(&child)` into `parent.children.borrow_mut()`, return `child`.
 `current = node.parent.borrow().upgrade()`: while it's `Some(p)`, push
 `p.name` and move up. Reverse and `join(".")`. When the parent has been
 dropped, `upgrade()` gives `None` and the walk simply stops.
+
+## c12_e09_build_subscription_registry
+`subscribe`: `Rc::new(RefCell::new(Vec::new()))`, then
+`self.subs.entry(path.to_string()).or_default().push(Rc::downgrade(&log))`,
+then return `log`. `publish`: `Vec::retain` on the `Vec<Weak<_>>` — inside
+the closure, `match weak.upgrade() { Some(log) => { push, count it, keep
+(true) }, None => drop it (false) }`. That single `retain` call delivers
+and prunes in one pass. `live_count` is the same upgrade-and-filter idea,
+just counting instead of mutating.
+
+## c12_e10_review_shared_state_bugs
+Three unrelated bugs in three unrelated pieces of code:
+- `record_and_total`: the `let mut readings = sensor.readings.borrow_mut();`
+  binding keeps that guard alive for the rest of the function, so `total`'s
+  `.borrow()` panics. Don't bind it — `sensor.readings.borrow_mut().push(value);`
+  as its own statement drops the guard immediately after.
+- `Node`: read the field doc/rule "parents own children, children only
+  point back" from `c12_e08`. `parent: RefCell<Option<Rc<Node>>>` breaks
+  that rule; make it `Weak<Node>` and use `Rc::downgrade` in `attach_child`.
+- `Cache::mirror`: `Rc::new(RefCell::new(value))` builds a fresh, unrelated
+  cell. To actually share, clone the `Rc` you already have: `Rc::clone(cell)`.

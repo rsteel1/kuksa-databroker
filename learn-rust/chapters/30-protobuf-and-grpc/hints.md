@@ -51,3 +51,26 @@ With `use ...::val_server::Val;` in scope you can call
 — both return `Result<tonic::Response<_>, Status>`; `?` propagates the
 `Status`, `.into_inner()` unwraps the response message.
 Extract the float with `response.data_point.and_then(|dp| dp.value).and_then(|v| match v.typed_value { Some(TypedValue::Float(f)) => Some(f), _ => None })`.
+
+## c30_e07_review_proto_field_mapping
+Three independent bugs, each a small slip a reviewer of a generated-code
+conversion should catch on sight.
+
+Bug 1: `DataType::Int8 => ProtoDataType::Uint8` and
+`DataType::Uint8 => ProtoDataType::Int8` — the right-hand sides are swapped.
+Compare each line side by side with its variant name; the fix is just
+matching them up (`Int8 => Int8`, `Uint8 => Uint8`).
+
+Bug 2: `DataValue::Uint32(v) => ProtoValue::Int32(v as i32)`. The `as i32`
+cast compiles silently because both are 32 bits wide, but it reinterprets
+the bit pattern, so `4_000_000_000u32` becomes a negative `i32`. The value
+must go into the wire type's `Uint32` field: `ProtoValue::Uint32(v)`, no
+cast needed.
+
+Bug 3: `DataValue::Double(v) => ProtoValue::Float(v as f32)` — same shape of
+bug, one field over. `as f32` compiles (it's a legal narrowing cast) but
+rounds to single precision. Route it to `ProtoValue::Double(v)` instead.
+
+General lesson: when a `From` impl has one match arm per enum variant,
+`cargo clippy` won't catch a wrong-but-type-correct right-hand side — only
+a test that checks the *value*, not just that the code compiles, will.

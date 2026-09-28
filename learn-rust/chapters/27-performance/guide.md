@@ -282,6 +282,7 @@ That's your job.
 | c27_e04_data_layout_for_speed | Struct of arrays, padding, and an inline-then-heap vector |
 | c27_e05_hashing_and_collections | A custom hasher, pre-sized maps with borrowed keys, allocation-free lookups |
 | c27_e06_checkpoint_part4 | Design a copy-on-write snapshot cache under allocation budgets |
+| c27_e07_review_hot_loop_costs | Review: 2 planted bugs — an accidentally O(n^2) dedup, and a clone of the whole buffer per update |
 
 ## Further reading
 

@@ -309,6 +309,8 @@ behaviour, only memory use.
 | `c15_e05_function_pointers_vs_closures` | `fn` tables, returning closures, a boxed pipeline |
 | `c15_e06_never_type_and_aliases` | `!`, `Infallible`, aliases for results and boxed iterators |
 | `c15_e07_box_str_rc_str` | Intern signal paths with `Arc<str>`; share them in a fan-out |
+| `c15_e08_build_calibration_pipeline` | build: a const-generic `fn`-pointer pipeline plus a `Box<dyn Fn>` one |
+| `c15_e09_review_layout_bugs` | review: find and fix 3 bugs — hardcoded divisor, off-by-one window length, interner that never reuses |
 
 ## Further reading
 

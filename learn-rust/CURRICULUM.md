@@ -22,13 +22,20 @@ providers, consumers, gRPC APIs), building and running it, workspace tour.
 e01_variables (let/mut) · e02_types_and_casts (integer widths, `as`, overflow,
 `try_from` — the Int8/Uint8 range checks) · e03_functions (expressions vs
 statements, return values) · e04_control_flow (if/loop/while/for, `loop` with
-break value) · e05_tuples_arrays_shadowing (shadowing for transformation).
+break value) · e05_tuples_arrays_shadowing (shadowing for transformation) ·
+e06_build_datapoint_stats (build: clamp/scale/count/average from a spec,
+no `i32` overflow) · e07_review_calibration (review: 3 planted bugs — a
+truncating cast, a shadowed accumulator, an off-by-one loop bound).
 DB: `types.rs` numeric variants, `broker.rs` validate min/max.
 
 ### 02 Ownership & borrowing — `c02`
 e01_move (E0382) · e02_clone_vs_move · e03_borrow (&T) · e04_mut_borrow (&mut,
 E0499/E0502) · e05_string_vs_str (paths as `&str`) · e06_slices_and_returning_refs
-(E0106/E0515). DB: `get_entry_by_path(&self, path: impl AsRef<str>)`, clone of
+(E0106/E0515) · e07_build_path_buffer (build: dedup/common-prefix/take-first
+over a path buffer from a spec) · e08_review_reading_buffer (review: 3
+planted bugs — a clone that hides a missed mutation, a stale
+pre-mutation read, an off-by-one slice bound).
+DB: `get_entry_by_path(&self, path: impl AsRef<str>)`, clone of
 Datapoint when leaving a lock.
 
 ### 03 Structs, methods & newtypes — `c03`
@@ -37,20 +44,32 @@ e03_associated_fns_new_default (`new`, `#[derive(Default)]`, `Default` impl) ·
 e04_derives (Debug/Clone/PartialEq/Eq/Hash — why `Field` derives Hash) ·
 e05_struct_update_syntax (`EntryUpdate { datapoint, ..Default::default() }`) ·
 e06_validated_newtype (SignalId-style newtype + a `VssPath` that can only be
-constructed valid). DB: `broker.rs` Metadata/Datapoint/Entry/EntryUpdate, `types.rs` SignalId.
+constructed valid) · e07_build_entry_stats (build: a running-stats struct
+and its methods from a spec) · e08_review_signal_registry (review: 3
+planted bugs — a clone that hides a missed mutation, an off-by-one
+index, a shadowed id counter).
+DB: `broker.rs` Metadata/Datapoint/Entry/EntryUpdate, `types.rs` SignalId.
 
 ### 04 Enums & pattern matching — `c04`
 e01_simple_enum (EntryType/ChangeType) · e02_enum_with_data (DataValue) ·
 e03_exhaustive_match (DataType Display, `_` pitfalls) · e04_option (if let,
 let-else, `?` on Option) · e05_option_option_tristate (EntryUpdate "leave
 unchanged / set to None / set to value") · e06_match_on_tuples (DataValue
-`greater_than` with type widening). DB: `types.rs`, `broker.rs` `Entry::apply`.
+`greater_than` with type widening) · e07_build_datavalue_ops (build:
+`DataValue` methods — type name, widening, compare, clamp — from a spec) ·
+e08_review_entry_apply (review: 3 planted bugs — a wildcard match arm
+that swallows a tri-state case, an off-by-one loop bound, a shadowed
+counter). DB: `types.rs`, `broker.rs` `Entry::apply`.
 
 ### 05 Collections — `c05`
 e01_vec · e02_hashmap_path_to_id (+ entry API) · e03_hashset_ops (is_disjoint,
 intersection, subset — subscription matching) · e04_btreemap_sorted (VSS
 flattened tree) · e05_indexmap_order (GetValues must preserve request order) ·
-e06_retain_cleanup (Subscriptions::cleanup). DB: `Database`, `Subscriptions`,
+e06_retain_cleanup (Subscriptions::cleanup) · e07_build_subscription_index
+(build: a path->subscribers index over HashMap/HashSet/BTreeMap from a
+spec) · e08_review_load_cleanup (review: 3 planted bugs — an inverted
+`retain` predicate, a stale pre-mutation read, an off-by-one slice bound).
+DB: `Database`, `Subscriptions`,
 `get_values_broker`.
 
 ### 06 Strings, text & formatting — `c06` (NEW)
@@ -64,20 +83,33 @@ e04_formatting_traits (`Display` vs `Debug`, `{:>8.2}`, `{:#?}`, `{:x}`,
 e05_advanced_patterns (match ergonomics, binding modes, `ref`/`ref mut`,
 `@` bindings, guards, slice patterns `[first, .., last]`, nested
 destructuring, `matches!`) · e06_cow_str (return borrowed-or-owned text
-without allocating in the common case). DB: VSS path handling, `Display`
+without allocating in the common case) · e07_build_path_formatting
+(build: char-safe truncation, formatting traits, `parse` and `Cow` from a
+spec) · e08_review_log_formatter (review: 3 planted bugs — a format spec
+that silently drops precision, a shadowed counter, an off-by-one
+word-slice bound). DB: VSS path handling, `Display`
 impls in `types.rs`, `databroker-proto` `FromStr for DataType`.
 
 ### 07 Error handling I: the basics — `c07`
 e01_result_basics · e02_question_mark · e03_custom_error_enum (+Display +
 std::error::Error) · e04_from_conversions (`?` auto-converts; `impl From<serde_json::Error>`
 as in `vss.rs`) · e05_thiserror (derive the same thing) · e06_panic_vs_result
-(`expect` vs `unwrap` vs Result; `anyhow` in binaries). DB: `UpdateError`,
+(`expect` vs `unwrap` vs Result; `anyhow` in binaries) ·
+e07_build_update_pipeline (build: a `thiserror`-derived error enum plus a
+fail-fast and a lenient parsing pipeline, from a spec) ·
+e08_review_batch_apply (review: 3 planted bugs — a swallowed `Err` that
+should have aborted a batch, an off-by-one line number, an error message
+that loses its real cause). DB: `UpdateError`,
 `vss::Error`, `(ActuationError, String)` tuples, `main.rs` `Box<dyn Error>`.
 
 ### 08 Modules, crates & Cargo basics — `c08`
 e01_inline_modules_and_pub · e02_use_paths_and_reexports (`pub use crate::types`) ·
 e03_visibility_pub_crate · e04_cfg_attributes (`#[cfg(test)]`, `cfg!`,
-`#[cfg_attr(...)]`; guide covers features, workspaces, build.rs, OUT_DIR).
+`#[cfg_attr(...)]`; guide covers features, workspaces, build.rs, OUT_DIR) ·
+e05_build_signal_store_module (build: a module with `pub use` re-exports
+and a small store, from a spec) · e06_review_module_boundary (review: 3
+planted bugs — an off-by-one segment count, a `Result` discarded right
+at a module boundary, a shadowed accumulator).
 DB: `lib.rs`, `Cargo.toml` features `tls`/`viss`/`otel`, `databroker-proto/build.rs`.
 
 ### 09 Traits & generics — `c09`
@@ -86,33 +118,56 @@ e04_from_into_tryfrom (`impl From<proto::Value> for DataValue` shape) ·
 e05_generic_bounds_and_where · e06_impl_trait_args (`impl Into<String>`,
 `impl AsRef<str>`, `impl IntoIterator<Item=...>` — `DataBroker::new`,
 `update_entries`) · e07_trait_objects_dyn (static vs dynamic dispatch,
-`Box<dyn Trait>`, object safety E0038). DB: `conversions.rs`, `ActuationProvider`.
+`Box<dyn Trait>`, object safety E0038) · e08_build_provider_chain (build: a
+`dyn ValueProvider` fallback chain plus `From`/`TryFrom`) ·
+e09_review_reading_conversions (review: 3 planted bugs — lossy cast, `Ord`
+impl contradicting its own doc comment, flipped comparison in a generic
+`clamp_all`). DB: `conversions.rs`, `ActuationProvider`.
 
 ### 10 Closures & iterators — `c10`
 e01_closure_capture · e02_fn_fnmut_fnonce (`with_read_lock(f: impl FnOnce)`) ·
 e03_iterator_adaptors (map/filter/filter_map/collect into HashMap/HashSet) ·
 e04_collect_results (`collect::<Result<Vec<_>,_>>`) · e05_custom_iterator
 (EntryReadIterator wrapping `hash_map::Values` + permission check) ·
-e06_subscription_matching (fold/any/all/chain over the subscription-matching loop). DB: `AuthorizedAccess::map_entries`, `EntryReadIterator`.
+e06_subscription_matching (fold/any/all/chain over the subscription-matching loop) ·
+e07_build_sample_stats (build: `windows`/`sort_by`/`fold` over a sample
+stream) · e08_review_sample_pipeline (review: 3 planted bugs — an adaptor
+chain ending in an unconsumed `map`, `filter_map` silently swallowing a
+parse error instead of propagating it, a reversed `sort_by` comparator).
+DB: `AuthorizedAccess::map_entries`, `EntryReadIterator`.
 
 ### 11 Lifetimes — `c11`
 e01_elision · e02_precise_lifetimes (E0106, tying the output to the right input) · e03_struct_holding_refs
 (`DatabaseReadAccess<'a,'b>`) · e04_enum_holding_refs (`EntryReadAccess<'a>`) ·
 e05_scoped_authorized_view (Database → authorized_read_access → view that
-can't outlive the DB or the permissions). DB: `broker.rs` 1062-1180, 1341-1380.
+can't outlive the DB or the permissions) · e06_build_vss_path_parser (build:
+`common_prefix`/`is_descendant` over dotted paths, choosing which input the
+output borrows from) · e07_review_path_tracking (review: 3 planted bugs,
+all lifetime-correct but logically wrong — a cache that forgets to update
+its "current" field, a first-segment helper that returns everything, a
+longer-of-two-strings comparison with a flipped operator). DB: `broker.rs`
+1062-1180, 1341-1380.
 
 ### 12 Smart pointers, Drop & interior mutability — `c12`
 e01_box_recursive_tree (VSS tree) · e02_drop_raii (guard that runs cleanup) ·
 e03_rc_refcell · e04_arc_shared · e05_mutex_rwlock (std) · e06_atomics
 (AtomicI32 `next_id`, `fetch_add`, Ordering) · e07_oncelock_lazylock
 (`ALLOW_ALL` without lazy_static) · e08_weak_parent_links (`Weak` for
-parent pointers, breaking `Rc` cycles). DB: `Database::next_id`, `permissions::ALLOW_ALL`,
-`Provider::next_request_id`.
+parent pointers, breaking `Rc` cycles) · e09_build_subscription_registry
+(build: `Rc<RefCell<_>>` handles plus `Weak` on the registry side, pruning
+dead subscribers) · e10_review_shared_state_bugs (review: 3 planted bugs —
+a `RefCell` double-borrow panic, an `Rc` parent link that should be `Weak`,
+and a "mirror" that copies instead of sharing). DB: `Database::next_id`,
+`permissions::ALLOW_ALL`, `Provider::next_request_id`.
 
 ### 13 Threads, Send & Sync — `c13`
 e01_spawn_join_move · e02_arc_mutex_counter · e03_std_mpsc_channel ·
-e04_send_sync_providers (Rc across threads → E0277; fix with Arc). DB: why
-`SignalProvider: Send + Sync + 'static`.
+e04_send_sync_providers (Rc across threads → E0277; fix with Arc) ·
+e06_build_fan_out (build: a `thread::scope` fan-out/fan-in over chunks) ·
+e07_review_worker_bugs (review: 3 planted bugs — a swallowed
+`JoinHandle::join` result hiding a worker panic, results written back at
+the wrong index, and a shared counter read before its workers are joined).
+DB: why `SignalProvider: Send + Sync + 'static`.
 
 ## Part II — Async Rust (the databroker's core)
 Plus **e05_checkpoint_part1** (NEW): a mixed-topic problem with no guide
@@ -133,7 +188,12 @@ the "`Deref` for inheritance" anti-pattern, `Borrow` for `HashMap` lookups by
 `&str`) · e06_any_downcast (`dyn Any`, `downcast_ref`; DB uses
 `std::any::Any` in `databroker-proto`) · e07_sealed_and_marker_traits (sealed
 trait pattern, marker traits, auto traits) · e08_typestate_phantomdata
-(builder whose `build()` exists only once every required field is set).
+(builder whose `build()` exists only once every required field is set) ·
+e09_build_typed_cell (build: a sealed-trait, `dyn Any`-backed typed cell
+plus a find-by-concrete-type helper) · e10_review_trait_bugs (review: 3
+planted bugs — an inherent method silently shadowing a trait method, a
+`Borrow<str>` impl that never returns the real key, `downcast_mut` checked
+against the wrong concrete type).
 In the wild: std `Iterator`, `serde::Serialize` blanket impls, tower `Service`.
 
 ### 15 Advanced types & memory layout — `c15` (NEW)
@@ -146,7 +206,12 @@ ring buffer) · e05_function_pointers_vs_closures (`fn` vs `Fn`,
 `Box<dyn Fn>`, returning closures) · e06_never_type_and_aliases (`!`,
 `Infallible`, `type` aliases such as the databroker's `SubscribeStream`) ·
 e07_box_str_rc_str (`Box<str>`, `Arc<str>` for shared immutable strings,
-interning signal paths).
+interning signal paths) · e08_build_calibration_pipeline (build: a
+const-generic `[fn; N]` pipeline plus a `Box<dyn Fn>` pipeline that
+captures state) · e09_review_layout_bugs (review: 3 planted bugs — a
+const-generic average with a hardcoded divisor, an off-by-one that lets a
+fixed-capacity window's length exceed its capacity, an interner that
+allocates fresh every call instead of reusing its cache).
 
 ### 16 Advanced lifetimes — `c16` (NEW)
 e01_static_bound_vs_static_ref (`T: 'static` means "owns its data", not
@@ -157,7 +222,13 @@ of `&'a mut T` and `Cell<T>`, the classic `&mut Vec<&'static str>` bug) ·
 e05_reborrowing_and_nll (implicit reborrows, two-phase borrows, and why
 NLL accepts code that looks wrong) · e06_self_referential_problem (why a
 struct can't hold a reference into itself; fix with indices, `Arc`, or split
-ownership, which leads into `Pin` in chapter 24).
+ownership, which leads into `Pin` in chapter 24) · e07_build_window_visitor
+(build: a `for<'s>` higher-ranked windowed visitor, plus a `'static`
+closure factory that survives its creator and crosses a thread boundary) ·
+e08_review_static_and_reborrow_bugs (review: 3 planted bugs — a
+lifetime-carrying cache that duplicates instead of overwriting, `'static`
+closures sharing one mutable cell instead of each owning its own snapshot,
+and a helper that clones instead of taking an implicit reborrow).
 
 ### 17 Error handling II: mastery — `c17` (NEW)
 e01_combinators (`map`, `map_err`, `and_then`, `ok_or_else`, `unwrap_or_else`,
@@ -180,7 +251,11 @@ the code isn't tied to one runtime) · e07_panics_unwinding_poisoning
 poisoning and `PoisonError::into_inner`, `#[must_use]`, `#[track_caller]`) ·
 e08_errors_across_boundaries (`Box<dyn Error + Send + Sync + 'static>` and
 why each bound is needed, errors crossing threads, errors in iterator
-pipelines, fail-fast vs collect-all). DB: `UpdateError`, `(ActuationError,
+pipelines, fail-fast vs collect-all) · e09_review_context_and_from (review:
+3 planted bugs — a blanket `From<ParseIntError>` that maps every field to
+the wrong `ConfigError` variant, a swallowed parse error defaulting to zero
+instead of propagating, and a missing empty-field check reported as a
+parse failure). DB: `UpdateError`, `(ActuationError,
 String)` tuples, the provider-fallback strategy in `get_values_broker`,
 `to_status_with_code`, and the `todo!()` panic reachable from `Actuate`
 (`conversions.rs:431`), fixed properly with `TryFrom`.
@@ -195,7 +270,11 @@ way `types.rs` repeats per-numeric-type code) · e05_reading_derive_output
 `cargo expand` usage; tests pin the behaviour of hand-written equivalents) ·
 e06_write_a_derive_macro (proc macro in the `exercise-macros` crate: a
 `#[derive(SignalNames)]` that lists a struct's field names, using
-`syn`/`quote` and `compile_error!` for bad input). In the wild:
+`syn`/`quote` and `compile_error!` for bad input) · e07_review_macro_hygiene
+(review: 3 planted bugs — a macro that expands one of its arguments twice
+so a side effect runs twice, a repetition body that reuses an outer
+metavariable instead of the current repeated element, and a recursive
+counting macro whose empty-input base case is off by one). In the wild:
 `tokio::main`, `async_trait`, `serde`, `clap::Parser`, `tonic::include_proto!`.
 
 ### 19 std I/O, files, processes & CLI programs — `c19` (NEW)
@@ -210,7 +289,11 @@ tool: args → read file → filter → output, fully testable because the core
 is a function over `impl BufRead` and `impl Write`) ·
 e06_checkpoint_part2 (mixed-topic, minimal scaffolding: a config-file
 loader with layered errors (chapter 17), a declarative macro for defaults
-(18), `FromStr` parsing (06) and a typestate builder (14)).
+(18), `FromStr` parsing (06) and a typestate builder (14)) ·
+e07_review_line_reader (review: 3 planted bugs — a fixed-size header read
+that assumes one `read()` call fills the buffer, a `read_line` buffer
+never cleared between lines so lines accumulate, and a final line with no
+trailing newline silently dropped).
 
 ## Part III — Async Rust (the databroker's core)
 
@@ -219,7 +302,11 @@ e01_async_await · e02_tokio_spawn_joinhandle · e03_sleep_and_timeout
 (`start_paused`) · e04_join_all_concurrency (sequential vs concurrent —
 commit 748a914) · e05_select (first of message / shutdown) ·
 e06_blocking_and_send (spawn_blocking; "future is not Send" from a std
-MutexGuard held across await). DB: `start_housekeeping_task`, `open_provider_stream`.
+MutexGuard held across await) · e07_review_blocking_and_concurrency
+(review: 2 planted bugs — `std::thread::sleep` blocking the executor
+instead of `tokio::time::sleep`, and three independent sensor reads
+awaited sequentially instead of with `tokio::join!`). DB:
+`start_housekeeping_task`, `open_provider_stream`.
 
 ### 21 Async locks & channels — `c21`
 e01_tokio_mpsc_backpressure · e02_oneshot_request_reply · e03_broadcast_and_lag
@@ -230,6 +317,10 @@ provider — commit e1fdfd1) · e07_deadline_budget (`saturating_duration_since`
 one deadline across phases). DB: `update_entries`, `get_values_broker`,
 `Provider::get_signals_values_from_provider`.
 Plus e08_watch_latest_value (`tokio::sync::watch` for "latest value wins" state).
+Plus e09_review_shutdown_and_joinhandle (review: 2 planted bugs — a
+`tokio::spawn` `JoinHandle` dropped instead of stored, so shutdown can't
+wait for the worker, and a shutdown branch that stops the loop without
+draining items already queued).
 
 ### 22 Streams — `c22`
 e01_stream_next (StreamExt) · e02_receiver_stream (mpsc → Stream) ·
@@ -239,6 +330,9 @@ e04_async_stream_macro · e05_boxed_stream_type_alias
 `AuthorizedAccess::subscribe`, `convert_to_proto_stream`.
 Plus e06_async_io_framing (`AsyncRead`/`AsyncWrite`, `AsyncBufReadExt::lines`,
 framing a line protocol over a stream).
+Plus e07_review_unpolled_streams (review: 2 planted bugs — `if let` instead
+of `while let` polling a stream exactly once, and a stream built inside a
+block that drops it before its first poll).
 
 ### 23 Async traits & the provider pattern — `c23`
 e01_async_fn_in_trait (native, static dispatch) · e02_async_trait_for_dyn
@@ -246,7 +340,11 @@ e01_async_fn_in_trait (native, static dispatch) · e02_async_trait_for_dyn
 (`Arc<dyn Trait>` in a map, `is_available`) · e04_bounded_provider_calls
 (timeout hanging provider, join_all, fallback) · e05_request_id_correlation
 (AtomicU32 request ids, skip stale responses, partial response fallback —
-commit 7a210d0). DB: `SignalProvider`, `Provider` impl in `grpc/kuksa_val_v2/val.rs`.
+commit 7a210d0) · e06_review_concurrent_and_bounded (review: 2 planted bugs
+— providers queried one after another instead of with `join_all`, and a
+semaphore permit dropped before the call it's meant to gate, so a
+concurrency limit is never actually enforced). DB: `SignalProvider`,
+`Provider` impl in `grpc/kuksa_val_v2/val.rs`.
 
 ## Part III — The databroker's domains
 
@@ -264,7 +362,10 @@ cancellation-safe vs unsafe `select!` branches; `JoinHandle::abort`,
 e07_tower_service (implement `tower::Service` plus a middleware `Layer`
 for timeout/logging: the abstraction tonic and axum are built on) ·
 e08_checkpoint_part3 (mixed-topic: a rate-limited, cancellable fan-out with
-a broadcast shutdown, bounded channels and a timeout budget).
+a broadcast shutdown, bounded channels and a timeout budget) ·
+e09_review_waker_storage (review: 2 planted bugs — a hand-written future
+that never stores the waker it's given, and a signaller that flips a flag
+but never wakes it).
 DB: `tonic` interceptors are tower layers (`grpc/server.rs`),
 `ReceiverStream`, and the `select!` loop in `open_provider_stream`.
 
@@ -280,7 +381,11 @@ e05_deadlock_and_lock_ordering (reproduce a two-lock deadlock with
 `try_lock`, then fix it with a consistent lock order) ·
 e06_data_parallelism_by_hand (chunked parallel map over scoped threads;
 the guide explains rayon's work stealing) · e07_rwlock_vs_mutex_vs_channels
-(same problem three ways, and when each wins). In the wild:
+(same problem three ways, and when each wins) ·
+e08_review_ordering_and_lock_order (review: 2 planted bugs — a publish
+flag using `Relaxed` instead of `Release`/`Acquire`, and a transfer that
+locks two accounts in argument order instead of a consistent global order,
+deadlocking under concurrent opposite-direction transfers). In the wild:
 `crossbeam`, `parking_lot`, `rayon`, `dashmap`.
 
 ### 26 Unsafe Rust & FFI — `c26` (NEW)
@@ -293,9 +398,13 @@ the invariants its unsafe interior relies on) · e04_maybeuninit_and_layout
 boundary) · e06_ffi_expose_rust (an `extern "C" fn` with `#[no_mangle]` and a
 C-compatible `#[repr(C)]` struct; callbacks) · e07_ub_catalogue (spot the UB:
 reading the listed snippets and choosing sound rewrites; tests exercise the
-sound versions). Guide: the Nomicon's rules, Miri (`cargo +nightly miri
-test`), `unsafe_code` lints, `no_std` and embedded (relevant for in-vehicle
-Rust). Files opt in with `#![allow(unsafe_code)]`.
+sound versions) · e08_review_invariant_guards (review: 2 planted bugs — a
+validating constructor that computes the validation and discards it, and a
+`truncate` that skips its char-boundary check, either of which would make
+the type's `unsafe` `as_str` unsound; caught at the safe guard, never by
+actually reading corrupted data). Guide: the Nomicon's rules, Miri
+(`cargo +nightly miri test`), `unsafe_code` lints, `no_std` and embedded
+(relevant for in-vehicle Rust). Files opt in with `#![allow(unsafe_code)]`.
 
 ### 27 Performance & profiling — `c27` (NEW)
 e01_counting_allocator (a `GlobalAlloc` wrapper that counts allocations;
@@ -308,7 +417,11 @@ arrays vs array of structs, `Vec` over linked lists, `SmallVec`-style inline
 storage by hand) · e05_hashing_and_collections (`HashMap` with capacity,
 the choice of hasher, `BTreeMap` vs `HashMap`, `IndexMap`) ·
 e06_checkpoint_part4 (mixed-topic: a lock-free-read, allocation-budgeted
-signal cache with an unsafe-free public API). Guide: benchmarking with
+signal cache with an unsafe-free public API) · e07_review_hot_loop_costs
+(review: 2 planted bugs — a dedup that rescans its whole output per input
+(accidentally O(n^2), caught by counting comparisons) and an update loop
+that clones the entire buffer on every iteration instead of writing
+through it (caught by counting allocations)). Guide: benchmarking with
 criterion and `std::hint::black_box`, profiling with `cargo flamegraph` and
 samply, release profiles (`lto`, `opt-level = "s"`, `codegen-units` in the
 databroker's `Cargo.toml`), and when not to optimise.
@@ -319,14 +432,21 @@ databroker's `Cargo.toml`), and when not to optimise.
 e01_derive_deserialize · e02_rename_default_optional · e03_enum_representations
 (`rename_all`, untagged) · e04_serde_json_value (default/allowed values of
 mixed type → DataValue) · e05_flatten_vss_tree (recursive tree → `BTreeMap`
-of dotted paths). DB: `vss.rs`.
+of dotted paths) · e06_review_entry_attributes (review: 3 planted bugs — a
+`#[serde(rename)]` key that doesn't match the real JSON, a
+`#[serde(default = "...")]` function that returns the wrong value, and an
+enum variant renamed to the wrong case so a value that's actually present
+fails to parse). DB: `vss.rs`.
 
 ### 29 Strings, globs & permissions — `c29`
 e01_string_methods (split/join/starts_with/strip_suffix) ·
 e02_validate_vss_path (`is_valid_path`) · e03_glob_to_matcher (VSS glob →
 `glob_match` pattern, the "branch matches children" rule) ·
 e04_builder_pattern (PermissionBuilder, consuming `self`) ·
-e05_permissions_can_read (expiry + read-implied-by-other-scopes). DB: `glob.rs`,
+e05_permissions_can_read (expiry + read-implied-by-other-scopes) ·
+e06_review_glob_and_permission_edge_cases (review: 3 planted bugs — an
+inverted wildcard check in the glob translation, a retry that re-matches
+the same un-stripped glob, and a `can_read` OR-list missing `provide`). DB: `glob.rs`,
 `permissions.rs`, `authorization/jwt/scope.rs`, doc/wildcard_matching.md.
 
 ### 30 Protobuf & gRPC with tonic/prost — `c30`
@@ -335,14 +455,21 @@ e02_oneof_enums (`signal_id::Signal::{Path,Id}`) · e03_proto_conversions
 (Value ↔ DataValue both directions) · e04_status_codes (map domain errors →
 `tonic::Status`) · e05_request_extensions_interceptor (Bearer token →
 extension, `Request<()>` interceptor shape) · e06_call_val_service_directly
-(call the real `Val` trait on `DataBroker` with a `tonic::Request`).
+(call the real `Val` trait on `DataBroker` with a `tonic::Request`) ·
+e07_review_proto_field_mapping (review: 3 planted bugs — an `Int8`/`Uint8`
+pair swapped in an enum mapping, a `u32` routed into the wrong numeric
+`oneof` field, a `Double` narrowed to `f32`).
 DB: `databroker-proto`, `grpc/server.rs`, `grpc/kuksa_val_v2/{val,conversions}.rs`.
 
 ### 31 Building a service: config, logging, shutdown — `c31`
 e01_clap_args_env (derive + `env`, defaults) · e02_tracing_basics (levels,
 fields, `#[instrument]`, EnvFilter from RUST_LOG) · e03_graceful_shutdown
 (signal future → broadcast → tasks exit) · e04_cfg_feature_gates (code that
-compiles both ways; guide covers `--features viss,otel`). DB: `main.rs`,
+compiles both ways; guide covers `--features viss,otel`) ·
+e05_review_graceful_shutdown (review: 2 planted bugs — a worker that
+subscribes to the shutdown broadcast only after it's spawned, missing the
+message; a grace period reapplied per worker instead of once for the whole
+batch). DB: `main.rs`,
 `lib.rs` `init_logging`, `grpc/server.rs` `shutdown`.
 
 ### 32 Testing & quality — `c32`
@@ -359,6 +486,10 @@ contains two hidden bugs; the grader runs your tests against good and bad
 versions). Guide adds: doc tests (and why integration-test files can't have
 them), `cargo test` flags, Miri, fuzzing with cargo-fuzz, loom, coverage,
 mutation testing.
+Plus e07_review_flawed_tests (review: 3 planted bugs, all in the tests
+rather than the code under test — an assertion-free test, a `should_panic`
+with no `expected` string, and a hardcoded expected value that doesn't
+match the documented contract). DB: `broker.rs` `cleanup_change_subscriptions`.
 
 ### 33 Cargo, the ecosystem & API design — `c33` (NEW)
 e01_semver_and_breaking_changes (which changes are breaking; the tests
@@ -371,7 +502,11 @@ public type; refactor a deliberately awkward API) · e04_editions_and_msrv
 paths, disjoint closure captures, RPIT capture rules, `gen` keyword, let
 chains) · e05_choosing_crates (the blessed.rs categories; read a
 `Cargo.toml` and `cargo tree` output and answer dependency questions in
-code). Guide: workspaces and inheritance, `build.rs`, `cargo deny`/audit,
+code) · e06_review_semver_and_api_naming (review: 3 planted bugs — adding
+a public field to an all-public-fields struct misclassified as non-breaking,
+an `as i32` cast that reinterprets a large `u32` instead of comparing it,
+and a version formatter that drops its own patch number). Guide: workspaces
+and inheritance, `build.rs`, `cargo deny`/audit,
 publishing, docs.rs, `no_std` crates.
 
 ### 34 Reading any Rust codebase — `c34` (NEW)
@@ -386,7 +521,11 @@ build a mini `anyhow` with context chains) · e03_read_indexmap (then build
 an order-preserving map on `Vec` + `HashMap`) · e04_read_serde_json_value
 (then write a mini JSON value type with an indexing API) ·
 e05_read_tonic_generated_code (answer structured questions about the
-generated `val_server` in `OUT_DIR` by implementing a stub that mirrors it).
+generated `val_server` in `OUT_DIR` by implementing a stub that mirrors it) ·
+e06_review_ordered_results (review: 2 planted bugs — a result-collecting
+loop that walks the request list backwards, and `swap_remove` used where
+`shift_remove` was needed, both breaking the one guarantee an `IndexMap`
+is there to provide). DB: `broker.rs:229,2200` (`get_values_broker`).
 
 ## Part VI — Capstones
 
@@ -396,7 +535,11 @@ e01_database_register (ids, path_to_id, metadata) · e02_update_and_validate
 permissions) · e04_subscriptions_notify (broadcast per subscription, field
 matching) · e05_subscribe_stream (initial notification, lag → None,
 buffer-size rules) · e06_housekeeping (cleanup when `receiver_count()==0`,
-spawned interval task, shutdown).
+spawned interval task, shutdown) · e07_review_validate_diff_apply (review:
+3 planted bugs — an inclusive min/max boundary treated as out-of-bounds, a
+diff that compares a whole `Datapoint` (timestamp included) instead of
+just its value, and a tri-state match that silently drops "clear the
+actuator target").
 
 ### 36 Capstone: drive the real databroker — `c36`
 e01_register_and_read (`DataBroker`, `authorized_access`, `add_entry`,
@@ -404,7 +547,11 @@ e01_register_and_read (`DataBroker`, `authorized_access`, `add_entry`,
 stream) · e03_permissions_denied (PermissionBuilder globs → PermissionDenied) ·
 e04_implement_signal_provider (real `SignalProvider` trait, `register_signals`,
 `get_values_broker` fallback) · e05_grpc_get_values_end_to_end (Val trait
-`get_values` + `publish_value` with Permissions extension).
+`get_values` + `publish_value` with Permissions extension) ·
+e06_review_signal_provider (review: 3 planted bugs against the real crate —
+`is_available` tied to call count instead of real health, a fallback rule
+that treats "unknown some" as "unknown all", and ids sorted before calling
+`get_values_broker`, losing request order).
 
 ### 37 Capstone projects with no scaffolding — `c37` (NEW)
 Only function signatures and tests are given, with no hints in the file,
@@ -414,7 +561,11 @@ connect over loopback on port 0) · e02_signal_cli (a CLI that loads a VSS
 JSON file, answers glob queries and prints a formatted tree, with errors
 done properly) · e03_plugin_system (trait-object plugins registered at
 runtime, config-driven, with error isolation so one plugin's panic doesn't
-take down the host).
+take down the host) · e04_review_kv_server (review: 3 planted bugs in a
+smaller, already-implemented key-value server — a case-sensitive command
+match, a per-connection store that is never actually shared, and a
+shutdown that stops accepting new connections but never closes the ones
+already open).
 
 ### 99 Contributing (guide only)
 Codebase tour file by file; three request lifecycles traced end-to-end

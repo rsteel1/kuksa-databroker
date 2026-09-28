@@ -174,6 +174,7 @@ and the tests exist to catch them.
 | `c37_e01_kv_server` | TCP key-value server with pub/sub and graceful shutdown |
 | `c37_e02_signal_cli` | A complete, testable CLI over VSS JSON files |
 | `c37_e03_plugin_system` | Config-driven trait-object plugins with failure and panic isolation |
+| `c37_e04_review_kv_server` | Review: 3 planted bugs — a case-sensitive command parser, per-connection state that isn't shared, shutdown that never closes open connections |
 
 ## Further reading
 

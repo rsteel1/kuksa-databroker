@@ -387,6 +387,7 @@ watch the `received SIGINT` / `Shutting down` log lines.
 | `c31_e02_tracing_basics` | Events with fields, `#[instrument]`, EnvFilter with fallback |
 | `c31_e03_graceful_shutdown` | Signal future → broadcast trigger → `select!`ing workers + grace period |
 | `c31_e04_cfg_feature_gates` | `#[cfg]` on functions and fields, `cfg!` expressions |
+| `c31_e05_review_graceful_shutdown` | Review: 2 planted bugs — subscribe-after-spawn race, grace applied per worker instead of to the batch |
 
 ## Further reading
 

@@ -119,3 +119,18 @@ Strategy, not code:
 - Before each pull, a worker stops if shutdown happened or the deadline has
   passed.
 - Don't hold a `std::sync::Mutex` guard across an `.await`.
+
+## c24_e09_review_waker_storage
+Two bugs, both about the contract every `Future` impl must keep: if you
+return `Pending`, something must be holding a `Waker` that will be woken
+once you'd make progress.
+
+Bug 1: `poll` checks `guard.open` and returns `Pending` without ever
+storing `cx.waker()` anywhere. Nothing the opener can call later will wake
+this task. Add a `waker: Option<Waker>` field to `Shared`, and in the
+`else` branch store `cx.waker().clone()` before returning `Pending`.
+
+Bug 2: `open()` sets the flag but never calls `.wake()` on anything, so
+even with the waker stored, the waiting task is never told to poll again.
+`take()` the stored waker and call `waker.wake()` if it was `Some`, after
+setting `open = true`.

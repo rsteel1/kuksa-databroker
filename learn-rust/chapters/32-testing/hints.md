@@ -68,3 +68,31 @@ obviously follows the contract. Generate a few hundred random call
 sequences (a tiny linear congruential generator is enough, and it's
 deterministic), apply each call to both the model and `F`, and compare
 after every step.
+
+## c32_e07_review_flawed_tests
+Three independent bugs, all in `mod tests` — the code under test
+(`cleanup`, `Subscription::new`) is correct and stays untouched.
+
+Bug 1 (`dead_subscriptions_are_removed`): the test calls `cleanup` and then
+checks nothing. A test with no assertion "passes" for every possible
+implementation, including a `cleanup` that is a no-op. Capture the return
+value and assert `removed == vec![1]`, and assert what's left in `subs`
+too (`vec![alive(2)]`) — both ends of the contract.
+
+Bug 2 (`zero_id_is_rejected`): `#[should_panic]` with no `expected` string
+passes if `Subscription::new` panics for ANY reason whatsoever — even one
+that has nothing to do with `id == 0` (say, a typo that makes it panic on
+every call). Add `#[should_panic(expected = "assigned starting at 1")]`,
+a substring actually present in the real panic message, so the test only
+passes for the right reason.
+
+Bug 3 (`expired_subscriptions_are_removed`): the `assert_eq!` expects
+`vec![1, 2]`, but `cleanup`'s contract only removes what's dead or expired
+— id 2 is neither, so it must survive. This is the one bug that already
+makes `cargo test` fail on the unmodified file: the fix is to correct the
+*expected* value to `vec![1]` (and add the missing `subs` check), not to
+change `cleanup`.
+
+General lesson: a test suite that's green tells you nothing about quality
+on its own — it has to be checking the right thing, for the right reason,
+every time.

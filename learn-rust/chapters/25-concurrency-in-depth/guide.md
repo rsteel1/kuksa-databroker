@@ -326,6 +326,7 @@ In the wild (under `~/.cargo/registry/src/index.crates.io-*/`):
 | `c25_e05_deadlock_and_lock_ordering` | Deadlock-free transfers by lock order, and with `try_lock` back-off |
 | `c25_e06_data_parallelism_by_hand` | Dynamic scheduling with an atomic chunk counter; order-preserving `par_map` |
 | `c25_e07_rwlock_vs_mutex_vs_channels` | One store, three designs (`Mutex`, `RwLock`, actor thread) |
+| `c25_e08_review_ordering_and_lock_order` | Review: 2 planted bugs — a `Relaxed` publish flag, and a transfer that deadlocks on lock order |
 
 ## Further reading
 

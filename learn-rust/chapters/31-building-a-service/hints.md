@@ -30,3 +30,21 @@ Put `#[cfg(target_os = "linux")]` above the "systemd" function and
 exists on any platform. A field can be gated too: `#[cfg(unix)] unix_socket: ...`
 — and so must be the line that initialises it in `default_config`.
 `build_kind`: `if cfg!(debug_assertions) { "debug" } else { "release" }`.
+
+## c31_e05_review_graceful_shutdown
+Two independent bugs, both about "when" rather than "what".
+
+Bug 1: `spawn_worker` calls `trigger.subscribe()` *inside* the `async move`
+block passed to `tokio::spawn`. That call only runs once the runtime polls
+the new task for the first time — which can happen after the caller has
+already called `shutdown_trigger.send(())`. A `broadcast::Sender::send` only
+delivers to receivers that exist at that moment; a receiver created later
+never sees it. Move the `subscribe()` call out into `spawn_worker` itself,
+*before* `tokio::spawn(...)`, and move the resulting `Receiver` into the
+`async move` block like everything else.
+
+Bug 2: `run_until`'s loop calls `tokio::time::timeout(grace, worker).await`
+once per worker, so `grace` restarts for every single one — two workers
+that never finish take up to `2 * grace`, not `grace`. Wrap the whole batch
+in one `tokio::time::timeout(grace, futures::future::join_all(self.workers))`
+instead, so `grace` is spent once, no matter how many workers there are.

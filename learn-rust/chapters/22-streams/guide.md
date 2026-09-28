@@ -292,6 +292,7 @@ aren't moved after they've been polled.
 | `c22_e04_async_stream_macro` | `stream!`, `try_stream!`, and the v1 shutdown-aware stream |
 | `c22_e05_boxed_stream_type_alias` | Mix stream types behind `Pin<Box<dyn Stream + Send>>` |
 | `c22_e06_async_io_framing` | Length-prefixed framing (gRPC's wire format) over `AsyncRead`/`AsyncWrite`; frames as a `Stream` |
+| `c22_e07_review_unpolled_streams` | Review: fix a stream polled only once (`if let`) and a stream dropped before its first poll |
 
 ## Further reading
 

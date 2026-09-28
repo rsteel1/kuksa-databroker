@@ -327,6 +327,8 @@ past the end of its owner's scope.
 | `c16_e04_variance` | Fix two over-constrained signatures (`&mut Vec<&'static str>`, `&'a mut &'a str`) |
 | `c16_e05_reborrowing_and_nll` | Explicit reborrow through a generic; restructure around NLL problem case #3 |
 | `c16_e06_self_referential_problem` | Redesign a self-referential database with ids, like `broker.rs` |
+| `c16_e07_build_window_visitor` | build: a `for<'s>` windowed visitor plus a `'static` closure factory |
+| `c16_e08_review_static_and_reborrow_bugs` | review: find and fix 3 bugs — duplicate-not-overwrite cache, shared cell instead of a snapshot, clone instead of reborrow |
 
 ## Further reading
 

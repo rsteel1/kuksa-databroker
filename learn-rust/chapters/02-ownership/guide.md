@@ -361,6 +361,8 @@ runtime cost.
 | `c02_e04_mut_borrow` | E0596 and E0502; mutate through `iter_mut()` and `*` |
 | `c02_e05_string_vs_str` | `&str` params; return slices of the input; build a `String` |
 | `c02_e06_slices_and_returning_refs` | E0106/E0515; a first lifetime annotation; safe sub-slicing |
+| `c02_e07_build_path_buffer` | Build: dedup/common-prefix/take-first over a path buffer from a spec |
+| `c02_e08_review_reading_buffer` | Review: find 3 planted bugs (clone hides a mutation, stale read, off-by-one) |
 
 ## Further reading
 

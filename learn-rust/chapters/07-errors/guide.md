@@ -279,6 +279,8 @@ forgotten silently (`#[must_use]`), and error conversions are checked.
 | `c07_e04_from_conversions` | make `?` convert serde/parse errors via `From` |
 | `c07_e05_thiserror` | derive all of the above with `thiserror` |
 | `c07_e06_panic_vs_result` | choose panic vs Result; `anyhow` + `context` |
+| `c07_e07_build_update_pipeline` | Build: a `thiserror` error enum + fail-fast/lenient parsing pipeline from a spec |
+| `c07_e08_review_batch_apply` | Review: find 3 planted bugs (swallowed error, off-by-one, lost error context) |
 
 ## Further reading
 

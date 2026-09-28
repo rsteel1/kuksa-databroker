@@ -64,3 +64,42 @@ pair: `Some(("port", text)) => ...`. For the port use
 `text.parse::<u16>().with_context(|| format!("invalid port `{text}`"))?`
 (`Context` must be imported — it is). Use `let Some(port) = port else { bail!("missing port") };`
 (let-else) and `bail!` for the other errors.
+
+## c07_e07_build_update_pipeline
+No bug to fix — `ParseError`'s shape and the tests are the spec; you
+derive the trait and write the functions.
+
+Derive: `#[derive(Debug, PartialEq, thiserror::Error)]`, with one
+`#[error("...")]` above each variant, copied from its doc comment. Tuple
+fields are `{0}`; named fields use their name, and `{field:?}` uses
+`Debug` (so a `String` prints with quotes, matching the expected
+messages exactly).
+
+`parse_line`: trim first; empty means `Err(ParseError::Empty)`. Then
+`split_once('=')` -> `ok_or_else(|| ParseError::MissingEquals(...))?`,
+then `.trim().parse::<f64>()` -> `.map_err(|_| ParseError::BadNumber { .. })?`.
+
+`parse_all`: loop over `input.lines()`, skip blank ones, and push
+`parse_line(line)?` — the `?` is what makes it stop at the first error.
+
+`parse_all_lenient`: same loop, but `match parse_line(line) { Ok(p) =>
+oks.push(p), Err(e) => errs.push(e) }` instead of `?`, so nothing ever
+stops the loop.
+
+## c07_e08_review_batch_apply
+Compare each function's doc comment against what it actually does.
+
+Bug 1 (`apply_batch`): `parse_entry(i, raw)` passes the 0-based index
+from `enumerate()`, but `parse_entry`'s own doc comment says it wants a
+1-based line number. Pass `i + 1`.
+
+Bug 2 (`apply_batch`): `if let Ok((path, value)) = parse_entry(...) { ... }`
+does nothing when `parse_entry` returns `Err` — the loop just moves on to
+the next line instead of aborting, exactly the "silently skipped"
+behaviour the doc comment forbids. Match on the `Result` (or use `?`) so
+the error actually propagates out of `apply_batch`.
+
+Bug 3 (`first_error_message`): `Some("invalid entry".to_string())` is a
+fixed string that never looks at the real error — the doc comment
+promises the actual line and entry. Use the error's own `Display` (which
+you get for free from `thiserror`): `Some(e.to_string())`.

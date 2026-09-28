@@ -357,6 +357,7 @@ Warning signs (not proof of bugs, but places to look carefully):
 | `c34_e03_read_indexmap` | rebuild an insertion-ordered map with `swap_remove`/`shift_remove`; match real indexmap step by step |
 | `c34_e04_read_serde_json_value` | rebuild `Value` with sealed-trait indexing, never-panicking `[]`, and JSON Pointer |
 | `c34_e05_read_tonic_generated_code` | answer questions about generated tonic code (checked against the file) and write a mini generated server |
+| `c34_e06_review_ordered_results` | Review: 2 planted bugs — a request loop walked backwards, `swap_remove` where `shift_remove` was needed |
 
 ## Further reading
 

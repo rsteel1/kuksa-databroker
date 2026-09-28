@@ -85,3 +85,26 @@ to `()`.
 for each datapoint use `?` on `Option` inside a closure returning
 `Option<f32>`: `match dp.value?.typed_value? { TypedValue::Float(f) =>
 Some(f), _ => None }`.
+
+## c36_e06_review_signal_provider
+Three independent bugs, each a mismatch between what a `SignalProvider`
+promises and what it does.
+
+Bug 1: `is_available` returns `self.calls.load(..) == 0`, so the very
+first successful answer makes the provider permanently "unavailable" —
+the broker would then stop calling it and only ever read the database.
+This provider has no real notion of being down; it should just return
+`true`.
+
+Bug 2: `.any(|id| !self.values.contains_key(&id.id()))` triggers `Err(())`
+as soon as ONE requested id is unknown — but `get_values_broker` treats
+`Err(())` as "the provider answered nothing at all" and falls back to the
+database for every id in the request, discarding whatever this provider
+DID know. The contract is "error only if we know none of them":
+`.all(|id| !self.values.contains_key(&id.id()))`.
+
+Bug 3: sorting `ids` before calling `get_values_broker` reorders the
+response too — `get_values_broker` builds its reply by walking the exact
+list you hand it, in that order, because that's the whole point (the gRPC
+contract promises request order back). Drop the `sort_unstable_by_key`
+call; converting `i32` to `SignalId` is all this function needs to do.

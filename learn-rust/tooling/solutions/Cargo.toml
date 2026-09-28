@@ -74,6 +74,14 @@ name = "c01_e05_tuples_arrays_shadowing"
 path = "../../chapters/01-basics/solutions/c01_e05_tuples_arrays_shadowing.rs"
 
 [[test]]
+name = "c01_e06_build_datapoint_stats"
+path = "../../chapters/01-basics/solutions/c01_e06_build_datapoint_stats.rs"
+
+[[test]]
+name = "c01_e07_review_calibration"
+path = "../../chapters/01-basics/solutions/c01_e07_review_calibration.rs"
+
+[[test]]
 name = "c02_e01_move"
 path = "../../chapters/02-ownership/solutions/c02_e01_move.rs"
 
@@ -96,6 +104,14 @@ path = "../../chapters/02-ownership/solutions/c02_e05_string_vs_str.rs"
 [[test]]
 name = "c02_e06_slices_and_returning_refs"
 path = "../../chapters/02-ownership/solutions/c02_e06_slices_and_returning_refs.rs"
+
+[[test]]
+name = "c02_e07_build_path_buffer"
+path = "../../chapters/02-ownership/solutions/c02_e07_build_path_buffer.rs"
+
+[[test]]
+name = "c02_e08_review_reading_buffer"
+path = "../../chapters/02-ownership/solutions/c02_e08_review_reading_buffer.rs"
 
 [[test]]
 name = "c03_e01_define_struct"
@@ -122,6 +138,14 @@ name = "c03_e06_validated_newtype"
 path = "../../chapters/03-structs/solutions/c03_e06_validated_newtype.rs"
 
 [[test]]
+name = "c03_e07_build_entry_stats"
+path = "../../chapters/03-structs/solutions/c03_e07_build_entry_stats.rs"
+
+[[test]]
+name = "c03_e08_review_signal_registry"
+path = "../../chapters/03-structs/solutions/c03_e08_review_signal_registry.rs"
+
+[[test]]
 name = "c04_e01_simple_enum"
 path = "../../chapters/04-enums/solutions/c04_e01_simple_enum.rs"
 
@@ -144,6 +168,14 @@ path = "../../chapters/04-enums/solutions/c04_e05_option_option_tristate.rs"
 [[test]]
 name = "c04_e06_match_on_tuples"
 path = "../../chapters/04-enums/solutions/c04_e06_match_on_tuples.rs"
+
+[[test]]
+name = "c04_e07_build_datavalue_ops"
+path = "../../chapters/04-enums/solutions/c04_e07_build_datavalue_ops.rs"
+
+[[test]]
+name = "c04_e08_review_entry_apply"
+path = "../../chapters/04-enums/solutions/c04_e08_review_entry_apply.rs"
 
 [[test]]
 name = "c05_e01_vec"
@@ -170,6 +202,14 @@ name = "c05_e06_retain_cleanup"
 path = "../../chapters/05-collections/solutions/c05_e06_retain_cleanup.rs"
 
 [[test]]
+name = "c05_e07_build_subscription_index"
+path = "../../chapters/05-collections/solutions/c05_e07_build_subscription_index.rs"
+
+[[test]]
+name = "c05_e08_review_load_cleanup"
+path = "../../chapters/05-collections/solutions/c05_e08_review_load_cleanup.rs"
+
+[[test]]
 name = "c06_e01_utf8_bytes_chars"
 path = "../../chapters/06-strings-and-formatting/solutions/c06_e01_utf8_bytes_chars.rs"
 
@@ -192,6 +232,14 @@ path = "../../chapters/06-strings-and-formatting/solutions/c06_e05_advanced_patt
 [[test]]
 name = "c06_e06_cow_str"
 path = "../../chapters/06-strings-and-formatting/solutions/c06_e06_cow_str.rs"
+
+[[test]]
+name = "c06_e07_build_path_formatting"
+path = "../../chapters/06-strings-and-formatting/solutions/c06_e07_build_path_formatting.rs"
+
+[[test]]
+name = "c06_e08_review_log_formatter"
+path = "../../chapters/06-strings-and-formatting/solutions/c06_e08_review_log_formatter.rs"
 
 [[test]]
 name = "c07_e01_result_basics"
@@ -218,6 +266,14 @@ name = "c07_e06_panic_vs_result"
 path = "../../chapters/07-errors/solutions/c07_e06_panic_vs_result.rs"
 
 [[test]]
+name = "c07_e07_build_update_pipeline"
+path = "../../chapters/07-errors/solutions/c07_e07_build_update_pipeline.rs"
+
+[[test]]
+name = "c07_e08_review_batch_apply"
+path = "../../chapters/07-errors/solutions/c07_e08_review_batch_apply.rs"
+
+[[test]]
 name = "c08_e01_inline_modules_and_pub"
 path = "../../chapters/08-modules-and-cargo/solutions/c08_e01_inline_modules_and_pub.rs"
 
@@ -232,6 +288,14 @@ path = "../../chapters/08-modules-and-cargo/solutions/c08_e03_visibility_pub_cra
 [[test]]
 name = "c08_e04_cfg_attributes"
 path = "../../chapters/08-modules-and-cargo/solutions/c08_e04_cfg_attributes.rs"
+
+[[test]]
+name = "c08_e05_build_signal_store_module"
+path = "../../chapters/08-modules-and-cargo/solutions/c08_e05_build_signal_store_module.rs"
+
+[[test]]
+name = "c08_e06_review_module_boundary"
+path = "../../chapters/08-modules-and-cargo/solutions/c08_e06_review_module_boundary.rs"
 
 [[test]]
 name = "c09_e01_define_and_impl_trait"
@@ -262,6 +326,14 @@ name = "c09_e07_trait_objects_dyn"
 path = "../../chapters/09-traits-and-generics/solutions/c09_e07_trait_objects_dyn.rs"
 
 [[test]]
+name = "c09_e08_build_provider_chain"
+path = "../../chapters/09-traits-and-generics/solutions/c09_e08_build_provider_chain.rs"
+
+[[test]]
+name = "c09_e09_review_reading_conversions"
+path = "../../chapters/09-traits-and-generics/solutions/c09_e09_review_reading_conversions.rs"
+
+[[test]]
 name = "c10_e01_closure_capture"
 path = "../../chapters/10-closures-and-iterators/solutions/c10_e01_closure_capture.rs"
 
@@ -286,6 +358,14 @@ name = "c10_e06_subscription_matching"
 path = "../../chapters/10-closures-and-iterators/solutions/c10_e06_subscription_matching.rs"
 
 [[test]]
+name = "c10_e07_build_sample_stats"
+path = "../../chapters/10-closures-and-iterators/solutions/c10_e07_build_sample_stats.rs"
+
+[[test]]
+name = "c10_e08_review_sample_pipeline"
+path = "../../chapters/10-closures-and-iterators/solutions/c10_e08_review_sample_pipeline.rs"
+
+[[test]]
 name = "c11_e01_elision"
 path = "../../chapters/11-lifetimes/solutions/c11_e01_elision.rs"
 
@@ -304,6 +384,14 @@ path = "../../chapters/11-lifetimes/solutions/c11_e04_enum_holding_refs.rs"
 [[test]]
 name = "c11_e05_scoped_authorized_view"
 path = "../../chapters/11-lifetimes/solutions/c11_e05_scoped_authorized_view.rs"
+
+[[test]]
+name = "c11_e06_build_vss_path_parser"
+path = "../../chapters/11-lifetimes/solutions/c11_e06_build_vss_path_parser.rs"
+
+[[test]]
+name = "c11_e07_review_path_tracking"
+path = "../../chapters/11-lifetimes/solutions/c11_e07_review_path_tracking.rs"
 
 [[test]]
 name = "c12_e01_box_recursive"
@@ -338,6 +426,14 @@ name = "c12_e08_weak_parent_links"
 path = "../../chapters/12-smart-pointers/solutions/c12_e08_weak_parent_links.rs"
 
 [[test]]
+name = "c12_e09_build_subscription_registry"
+path = "../../chapters/12-smart-pointers/solutions/c12_e09_build_subscription_registry.rs"
+
+[[test]]
+name = "c12_e10_review_shared_state_bugs"
+path = "../../chapters/12-smart-pointers/solutions/c12_e10_review_shared_state_bugs.rs"
+
+[[test]]
 name = "c13_e01_spawn_join_move"
 path = "../../chapters/13-threads/solutions/c13_e01_spawn_join_move.rs"
 
@@ -356,6 +452,14 @@ path = "../../chapters/13-threads/solutions/c13_e04_send_sync_providers.rs"
 [[test]]
 name = "c13_e05_checkpoint_part1"
 path = "../../chapters/13-threads/solutions/c13_e05_checkpoint_part1.rs"
+
+[[test]]
+name = "c13_e06_build_fan_out"
+path = "../../chapters/13-threads/solutions/c13_e06_build_fan_out.rs"
+
+[[test]]
+name = "c13_e07_review_worker_bugs"
+path = "../../chapters/13-threads/solutions/c13_e07_review_worker_bugs.rs"
 
 [[test]]
 name = "c14_e01_associated_types_vs_generics"
@@ -390,6 +494,14 @@ name = "c14_e08_typestate_phantomdata"
 path = "../../chapters/14-advanced-traits/solutions/c14_e08_typestate_phantomdata.rs"
 
 [[test]]
+name = "c14_e09_build_typed_cell"
+path = "../../chapters/14-advanced-traits/solutions/c14_e09_build_typed_cell.rs"
+
+[[test]]
+name = "c14_e10_review_trait_bugs"
+path = "../../chapters/14-advanced-traits/solutions/c14_e10_review_trait_bugs.rs"
+
+[[test]]
 name = "c15_e01_size_and_layout"
 path = "../../chapters/15-advanced-types-and-layout/solutions/c15_e01_size_and_layout.rs"
 
@@ -418,6 +530,14 @@ name = "c15_e07_box_str_rc_str"
 path = "../../chapters/15-advanced-types-and-layout/solutions/c15_e07_box_str_rc_str.rs"
 
 [[test]]
+name = "c15_e08_build_calibration_pipeline"
+path = "../../chapters/15-advanced-types-and-layout/solutions/c15_e08_build_calibration_pipeline.rs"
+
+[[test]]
+name = "c15_e09_review_layout_bugs"
+path = "../../chapters/15-advanced-types-and-layout/solutions/c15_e09_review_layout_bugs.rs"
+
+[[test]]
 name = "c16_e01_static_bound_vs_static_ref"
 path = "../../chapters/16-advanced-lifetimes/solutions/c16_e01_static_bound_vs_static_ref.rs"
 
@@ -440,6 +560,14 @@ path = "../../chapters/16-advanced-lifetimes/solutions/c16_e05_reborrowing_and_n
 [[test]]
 name = "c16_e06_self_referential_problem"
 path = "../../chapters/16-advanced-lifetimes/solutions/c16_e06_self_referential_problem.rs"
+
+[[test]]
+name = "c16_e07_build_window_visitor"
+path = "../../chapters/16-advanced-lifetimes/solutions/c16_e07_build_window_visitor.rs"
+
+[[test]]
+name = "c16_e08_review_static_and_reborrow_bugs"
+path = "../../chapters/16-advanced-lifetimes/solutions/c16_e08_review_static_and_reborrow_bugs.rs"
 
 [[test]]
 name = "c17_e01_combinators"
@@ -474,6 +602,10 @@ name = "c17_e08_errors_across_boundaries"
 path = "../../chapters/17-error-handling-mastery/solutions/c17_e08_errors_across_boundaries.rs"
 
 [[test]]
+name = "c17_e09_review_context_and_from"
+path = "../../chapters/17-error-handling-mastery/solutions/c17_e09_review_context_and_from.rs"
+
+[[test]]
 name = "c18_e01_macro_rules_basics"
 path = "../../chapters/18-macros/solutions/c18_e01_macro_rules_basics.rs"
 
@@ -496,6 +628,10 @@ path = "../../chapters/18-macros/solutions/c18_e05_reading_derive_output.rs"
 [[test]]
 name = "c18_e06_write_a_derive_macro"
 path = "../../chapters/18-macros/solutions/c18_e06_write_a_derive_macro.rs"
+
+[[test]]
+name = "c18_e07_review_macro_hygiene"
+path = "../../chapters/18-macros/solutions/c18_e07_review_macro_hygiene.rs"
 
 [[test]]
 name = "c19_e01_read_write_traits"
@@ -522,6 +658,10 @@ name = "c19_e06_checkpoint_part2"
 path = "../../chapters/19-std-io-and-cli/solutions/c19_e06_checkpoint_part2.rs"
 
 [[test]]
+name = "c19_e07_review_line_reader"
+path = "../../chapters/19-std-io-and-cli/solutions/c19_e07_review_line_reader.rs"
+
+[[test]]
 name = "c20_e01_async_await"
 path = "../../chapters/20-async-basics/solutions/c20_e01_async_await.rs"
 
@@ -544,6 +684,10 @@ path = "../../chapters/20-async-basics/solutions/c20_e05_select.rs"
 [[test]]
 name = "c20_e06_blocking_and_send"
 path = "../../chapters/20-async-basics/solutions/c20_e06_blocking_and_send.rs"
+
+[[test]]
+name = "c20_e07_review_blocking_and_concurrency"
+path = "../../chapters/20-async-basics/solutions/c20_e07_review_blocking_and_concurrency.rs"
 
 [[test]]
 name = "c21_e01_tokio_mpsc_backpressure"
@@ -578,6 +722,10 @@ name = "c21_e08_watch_latest_value"
 path = "../../chapters/21-async-locks-and-channels/solutions/c21_e08_watch_latest_value.rs"
 
 [[test]]
+name = "c21_e09_review_shutdown_and_joinhandle"
+path = "../../chapters/21-async-locks-and-channels/solutions/c21_e09_review_shutdown_and_joinhandle.rs"
+
+[[test]]
 name = "c22_e01_stream_next"
 path = "../../chapters/22-streams/solutions/c22_e01_stream_next.rs"
 
@@ -602,6 +750,10 @@ name = "c22_e06_async_io_framing"
 path = "../../chapters/22-streams/solutions/c22_e06_async_io_framing.rs"
 
 [[test]]
+name = "c22_e07_review_unpolled_streams"
+path = "../../chapters/22-streams/solutions/c22_e07_review_unpolled_streams.rs"
+
+[[test]]
 name = "c23_e01_async_fn_in_trait"
 path = "../../chapters/23-async-traits-and-providers/solutions/c23_e01_async_fn_in_trait.rs"
 
@@ -620,6 +772,10 @@ path = "../../chapters/23-async-traits-and-providers/solutions/c23_e04_bounded_p
 [[test]]
 name = "c23_e05_request_id_correlation"
 path = "../../chapters/23-async-traits-and-providers/solutions/c23_e05_request_id_correlation.rs"
+
+[[test]]
+name = "c23_e06_review_concurrent_and_bounded"
+path = "../../chapters/23-async-traits-and-providers/solutions/c23_e06_review_concurrent_and_bounded.rs"
 
 [[test]]
 name = "c24_e01_future_by_hand"
@@ -654,6 +810,10 @@ name = "c24_e08_checkpoint_part3"
 path = "../../chapters/24-async-internals/solutions/c24_e08_checkpoint_part3.rs"
 
 [[test]]
+name = "c24_e09_review_waker_storage"
+path = "../../chapters/24-async-internals/solutions/c24_e09_review_waker_storage.rs"
+
+[[test]]
 name = "c25_e01_scoped_threads"
 path = "../../chapters/25-concurrency-in-depth/solutions/c25_e01_scoped_threads.rs"
 
@@ -680,6 +840,10 @@ path = "../../chapters/25-concurrency-in-depth/solutions/c25_e06_data_parallelis
 [[test]]
 name = "c25_e07_rwlock_vs_mutex_vs_channels"
 path = "../../chapters/25-concurrency-in-depth/solutions/c25_e07_rwlock_vs_mutex_vs_channels.rs"
+
+[[test]]
+name = "c25_e08_review_ordering_and_lock_order"
+path = "../../chapters/25-concurrency-in-depth/solutions/c25_e08_review_ordering_and_lock_order.rs"
 
 [[test]]
 name = "c26_e01_raw_pointers"
@@ -710,6 +874,10 @@ name = "c26_e07_ub_catalogue"
 path = "../../chapters/26-unsafe-and-ffi/solutions/c26_e07_ub_catalogue.rs"
 
 [[test]]
+name = "c26_e08_review_invariant_guards"
+path = "../../chapters/26-unsafe-and-ffi/solutions/c26_e08_review_invariant_guards.rs"
+
+[[test]]
 name = "c27_e01_counting_allocator"
 path = "../../chapters/27-performance/solutions/c27_e01_counting_allocator.rs"
 
@@ -734,6 +902,10 @@ name = "c27_e06_checkpoint_part4"
 path = "../../chapters/27-performance/solutions/c27_e06_checkpoint_part4.rs"
 
 [[test]]
+name = "c27_e07_review_hot_loop_costs"
+path = "../../chapters/27-performance/solutions/c27_e07_review_hot_loop_costs.rs"
+
+[[test]]
 name = "c28_e01_derive_deserialize"
 path = "../../chapters/28-serde-and-vss/solutions/c28_e01_derive_deserialize.rs"
 
@@ -754,6 +926,10 @@ name = "c28_e05_flatten_vss_tree"
 path = "../../chapters/28-serde-and-vss/solutions/c28_e05_flatten_vss_tree.rs"
 
 [[test]]
+name = "c28_e06_review_entry_attributes"
+path = "../../chapters/28-serde-and-vss/solutions/c28_e06_review_entry_attributes.rs"
+
+[[test]]
 name = "c29_e01_string_methods"
 path = "../../chapters/29-strings-globs-permissions/solutions/c29_e01_string_methods.rs"
 
@@ -772,6 +948,10 @@ path = "../../chapters/29-strings-globs-permissions/solutions/c29_e04_builder_pa
 [[test]]
 name = "c29_e05_permissions_can_read"
 path = "../../chapters/29-strings-globs-permissions/solutions/c29_e05_permissions_can_read.rs"
+
+[[test]]
+name = "c29_e06_review_glob_and_permission_edge_cases"
+path = "../../chapters/29-strings-globs-permissions/solutions/c29_e06_review_glob_and_permission_edge_cases.rs"
 
 [[test]]
 name = "c30_e01_prost_messages"
@@ -798,6 +978,10 @@ name = "c30_e06_call_val_service_directly"
 path = "../../chapters/30-protobuf-and-grpc/solutions/c30_e06_call_val_service_directly.rs"
 
 [[test]]
+name = "c30_e07_review_proto_field_mapping"
+path = "../../chapters/30-protobuf-and-grpc/solutions/c30_e07_review_proto_field_mapping.rs"
+
+[[test]]
 name = "c31_e01_clap_args_env"
 path = "../../chapters/31-building-a-service/solutions/c31_e01_clap_args_env.rs"
 
@@ -812,6 +996,10 @@ path = "../../chapters/31-building-a-service/solutions/c31_e03_graceful_shutdown
 [[test]]
 name = "c31_e04_cfg_feature_gates"
 path = "../../chapters/31-building-a-service/solutions/c31_e04_cfg_feature_gates.rs"
+
+[[test]]
+name = "c31_e05_review_graceful_shutdown"
+path = "../../chapters/31-building-a-service/solutions/c31_e05_review_graceful_shutdown.rs"
 
 [[test]]
 name = "c32_e01_unit_tests_and_should_panic"
@@ -838,6 +1026,10 @@ name = "c32_e06_checkpoint_part5"
 path = "../../chapters/32-testing/solutions/c32_e06_checkpoint_part5.rs"
 
 [[test]]
+name = "c32_e07_review_flawed_tests"
+path = "../../chapters/32-testing/solutions/c32_e07_review_flawed_tests.rs"
+
+[[test]]
 name = "c33_e01_semver_and_breaking_changes"
 path = "../../chapters/33-cargo-ecosystem-api-design/solutions/c33_e01_semver_and_breaking_changes.rs"
 
@@ -858,6 +1050,10 @@ name = "c33_e05_choosing_crates"
 path = "../../chapters/33-cargo-ecosystem-api-design/solutions/c33_e05_choosing_crates.rs"
 
 [[test]]
+name = "c33_e06_review_semver_and_api_naming"
+path = "../../chapters/33-cargo-ecosystem-api-design/solutions/c33_e06_review_semver_and_api_naming.rs"
+
+[[test]]
 name = "c34_e01_read_tokio_broadcast"
 path = "../../chapters/34-reading-any-codebase/solutions/c34_e01_read_tokio_broadcast.rs"
 
@@ -876,6 +1072,10 @@ path = "../../chapters/34-reading-any-codebase/solutions/c34_e04_read_serde_json
 [[test]]
 name = "c34_e05_read_tonic_generated_code"
 path = "../../chapters/34-reading-any-codebase/solutions/c34_e05_read_tonic_generated_code.rs"
+
+[[test]]
+name = "c34_e06_review_ordered_results"
+path = "../../chapters/34-reading-any-codebase/solutions/c34_e06_review_ordered_results.rs"
 
 [[test]]
 name = "c35_e01_database_register"
@@ -902,6 +1102,10 @@ name = "c35_e06_housekeeping"
 path = "../../chapters/35-capstone-mini-databroker/solutions/c35_e06_housekeeping.rs"
 
 [[test]]
+name = "c35_e07_review_validate_diff_apply"
+path = "../../chapters/35-capstone-mini-databroker/solutions/c35_e07_review_validate_diff_apply.rs"
+
+[[test]]
 name = "c36_e01_register_and_read"
 path = "../../chapters/36-capstone-real-databroker/solutions/c36_e01_register_and_read.rs"
 
@@ -922,6 +1126,10 @@ name = "c36_e05_grpc_get_values_end_to_end"
 path = "../../chapters/36-capstone-real-databroker/solutions/c36_e05_grpc_get_values_end_to_end.rs"
 
 [[test]]
+name = "c36_e06_review_signal_provider"
+path = "../../chapters/36-capstone-real-databroker/solutions/c36_e06_review_signal_provider.rs"
+
+[[test]]
 name = "c37_e01_kv_server"
 path = "../../chapters/37-capstone-projects/solutions/c37_e01_kv_server.rs"
 
@@ -932,3 +1140,7 @@ path = "../../chapters/37-capstone-projects/solutions/c37_e02_signal_cli.rs"
 [[test]]
 name = "c37_e03_plugin_system"
 path = "../../chapters/37-capstone-projects/solutions/c37_e03_plugin_system.rs"
+
+[[test]]
+name = "c37_e04_review_kv_server"
+path = "../../chapters/37-capstone-projects/solutions/c37_e04_review_kv_server.rs"

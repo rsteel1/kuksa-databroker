@@ -334,6 +334,7 @@ lock too long — those are on you.
 | `c20_e04_join_all_concurrency` | Turn sequential provider queries into concurrent ones |
 | `c20_e05_select` | Write the provider connection loop with shutdown |
 | `c20_e06_blocking_and_send` | Fix a `!Send` future; move CPU work to `spawn_blocking` |
+| `c20_e07_review_blocking_and_concurrency` | Review: fix a `std::thread::sleep` blocking the executor and three sequential awaits that should overlap |
 
 ## Further reading
 

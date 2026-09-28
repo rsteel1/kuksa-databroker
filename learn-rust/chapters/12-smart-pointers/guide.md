@@ -366,6 +366,8 @@ another thread at the same time". Chapter 13 covers threads properly.
 | `c12_e06_atomics` | Replace `Cell` with atomics; `fetch_add`; Relaxed vs Acquire/Release |
 | `c12_e07_oncelock_lazylock` | `LazyLock` for `ALLOW_ALL`; `OnceLock` config loaded exactly once |
 | `c12_e08_weak_parent_links` | A VSS tree with `Weak` parent links; prove no cycle with the counts |
+| `c12_e09_build_subscription_registry` | build: an `Rc<RefCell<_>>` registry that prunes dead `Weak` subscribers |
+| `c12_e10_review_shared_state_bugs` | review: find and fix 3 bugs — double borrow panic, `Rc` cycle, accidental copy |
 
 ## Further reading
 

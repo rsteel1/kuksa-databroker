@@ -49,3 +49,27 @@ action string, then `matcher.allow(path)`.
 `can_read`: expired → `Expired`; then `[&self.read, &self.actuate, &self.provide, &self.create].iter().any(|m| m.is_match(path))`.
 The two write checks only look at one matcher each — a small private helper
 `fn check(expired, matcher, path)` avoids repeating yourself.
+
+## c29_e06_review_glob_and_permission_edge_cases
+Three independent bugs, each an edge case at the boundary between "has a
+wildcard" and "doesn't".
+
+Bug 1: `to_glob_string`'s `if` condition is backwards. The suffix must be
+appended when the pattern has **no** wildcard at all (`!glob.contains('*')`)
+— that's what makes a plain branch like `Vehicle.Cabin` also cover
+everything below it. As shipped it appends "/**" to patterns that already
+have a `*` (breaking direct-children matching, since `Vehicle/Cabin/*/**`
+needs two more segments, not one) and appends nothing to plain branches
+(so they stop matching their children at all). Flip the condition to
+`!glob.contains('*')`.
+
+Bug 2: the retry inside `is_match` calls `glob_match` again with the exact
+same `glob` string it just tried — including the `/**` suffix that made
+the first attempt fail. It needs to strip the suffix first:
+`glob.strip_suffix("/**")` (you already know it's there from `ends_with`),
+then match against the branch. Compare with `glob.rs:61-64`.
+
+Bug 3: `can_read`'s OR-list is missing `provide`. The rule (`permissions.rs:167`)
+is that read is implied by *any* of actuate, provide or create — a signal's
+own provider must be able to read the value it just wrote. Add `provide`
+back into the list.

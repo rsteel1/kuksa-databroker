@@ -382,6 +382,7 @@ That's a social contract, backed by tools like `cargo semver-checks`.
 | `c33_e03_api_guidelines` | refactor an awkward API into an idiomatic one the tests describe |
 | `c33_e04_editions_and_msrv` | fix 2015-style code, use 2021 semantics, answer an edition/MSRV quiz |
 | `c33_e05_choosing_crates` | parse real `cargo tree` output and answer dependency questions in code |
+| `c33_e06_review_semver_and_api_naming` | Review: 3 planted bugs — a breaking change classified as Minor, an `as i32` sign bug, a formatter dropping the patch number |
 
 ## Further reading
 

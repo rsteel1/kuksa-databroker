@@ -236,6 +236,7 @@ answer what you asked — the broker's code must defend against all of that.
 | `c23_e03_provider_registry` | Register, look up and clean up `Arc<dyn Provider>`s |
 | `c23_e04_bounded_provider_calls` | A simplified `get_values_broker`: concurrent, bounded, fallback, ordered |
 | `c23_e05_request_id_correlation` | The provider request/response exchange with ids and a deadline |
+| `c23_e06_review_concurrent_and_bounded` | Review: fix providers queried sequentially and a semaphore permit dropped before the call it gates |
 
 ## Further reading
 

@@ -346,6 +346,8 @@ chapter 12.
 | `c11_e03_struct_holding_refs` | Build `ReadView<'db, 'perm>`; return `&'db Entry` that outlives the view |
 | `c11_e04_enum_holding_refs` | Implement `EntryReadAccess<'a>` with `impl<'a>` and `impl …<'_>` |
 | `c11_e05_scoped_authorized_view` | Full read/write authorized views over a mini database |
+| `c11_e06_build_vss_path_parser` | build: a lifetime-carrying VSS path parser (`common_prefix`, `is_descendant`) |
+| `c11_e07_review_path_tracking` | review: find and fix 3 lifetime-correct-but-wrong bugs |
 
 ## Further reading
 

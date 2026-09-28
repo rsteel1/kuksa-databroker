@@ -128,3 +128,22 @@ why subscribing inside the task fails the "right after start" test.
 `shutdown`: `self.subscriptions.write().await.clear();` then
 `let _ = self.shutdown_trigger.send(());`. Clearing drops every
 `ChangeSubscription`, which drops its `Sender`, which ends the streams.
+
+## c35_e07_review_validate_diff_apply
+Three independent bugs, one in each of `validate_value`, `diff` and `apply`.
+
+Bug 1: `if value <= min { ... }` rejects a value that is exactly `min`.
+The real rule accepts the boundary (`greater_than_equal`) — only strictly
+below `min` is out of bounds. Change `<=` to `<`.
+
+Bug 2: `if *dp == self.datapoint` compares the WHOLE `Datapoint`, including
+`ts`. Since `Datapoint::now()` stamps a fresh timestamp every call, this is
+`false` on every single update, even ones whose value never changed —
+`diff` then never drops anything. Compare `dp.value == self.datapoint.value`
+instead.
+
+Bug 3: `if let Some(Some(target)) = update.actuator_target` only matches
+"set a new target" (`Some(Some(dp))`); `Some(None)` — "clear the target" —
+doesn't match the pattern and falls straight through, unapplied. Match the
+outer `Option` alone: `if let Some(target) = update.actuator_target { self.actuator_target = target; ... }`
+— `target` is already the right type (`Option<Datapoint>`) to assign directly.

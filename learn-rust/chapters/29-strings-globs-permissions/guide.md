@@ -304,6 +304,7 @@ the only way in.
 | `c29_e03_glob_to_matcher` | A validated `Matcher` with the databroker's translation rules |
 | `c29_e04_builder_pattern` | A consuming `PermissionBuilder` with an absorbing `Everything` state |
 | `c29_e05_permissions_can_read` | Scope string → permissions → `can_read` / `can_write_*` with expiry |
+| `c29_e06_review_glob_and_permission_edge_cases` | Review: 3 planted bugs in glob translation, the branch-matches-itself retry, and which scopes imply read |
 
 ## Further reading
 

@@ -43,3 +43,24 @@ Ok(())
 `parse_vss_from_str`: `let root: RootEntry = serde_json::from_str(json)?;`
 then loop over `root.0` calling `add_entry` — `root.0` is how you reach the
 inner value of a tuple struct.
+
+## c28_e06_review_entry_attributes
+Three independent bugs, each a mismatch between what the attribute says
+and what the real JSON actually contains.
+
+Bug 1: `#[serde(rename = "Type")]` on `entry_type`, but every VSS entry's
+key is lowercase `"type"`. serde matches the rename string exactly (it's
+not case-insensitive), so the real key is never found and the field is
+reported missing. Change the rename to `"type"`.
+
+Bug 2: `default_deprecated` returns `true`. `#[serde(default = "...")]`
+calls this function only when the key is absent, so every entry that
+never mentions `deprecated` was quietly treated as deprecated. It should
+return `false`.
+
+Bug 3: `ChangeType::Continuous` is renamed `"Continuous"`, but the JSON
+value is lowercase `"continuous"` (same case-sensitivity rule as bug 1,
+just on an enum variant instead of a struct field). Any entry that
+actually sets `x-kuksa-changetype` to `"continuous"` fails to parse at
+all, even though the key and the field are otherwise both correct. Change
+the rename to `"continuous"`.

@@ -59,3 +59,23 @@ iterator chain is the return value.
 hold a borrow of `path_to_id` while taking `entries.get_mut(&id)`.
 `std::mem::replace(&mut entry.value, value)` swaps in the new value and
 returns the old one.
+
+## c11_e06_build_vss_path_parser
+`parse`: `path.rsplit('.').next().unwrap_or(path)` gives the last segment
+whether or not there's a dot. `common_prefix`: zip `a.split('.')` with
+`b.split('.')`, walk them together accumulating a byte length, `break` at
+the first mismatched pair, then slice `&a[..len]` — notice the result only
+ever borrows from `a`. `is_descendant`: `child == parent` or
+(`child.starts_with(parent)` and the byte right after `parent` is `.`);
+that second check is what rules out `"Vehicle.CabinLight"` as a descendant
+of `"Vehicle.Cabin"`.
+
+## c11_e07_review_path_tracking
+Three independent bugs — the borrow checker has no opinion on any of them:
+- `LatestPath::update` pushes onto `seen` but never touches `self.current`.
+  Add the missing assignment.
+- `first_segment` just returns its argument. Split on `.` and take the
+  first piece.
+- `longer_of`'s `if` condition is backwards, so it always returns the
+  shorter string (and gives ties to the wrong side). Work out by hand what
+  `a.len() < b.len()` evaluates to for `("abc", "de")` and you'll see it.

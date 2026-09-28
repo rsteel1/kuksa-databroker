@@ -90,3 +90,25 @@ Strategy, not code:
    When all lines are processed, use `split_first()` on the VSS list to go
    through the typestate builder.
 5. `error_chain`: start with `to_string()`, then loop over `.source()`.
+
+## c19_e07_review_line_reader
+Bug 1: `Read::read` only promises to fill *up to* the buffer's length in
+one call — the `ChunkedReader` test deliberately hands back at most 3
+bytes at a time to prove `read_exact_header` doesn't check how much it
+actually got. Loop, tracking how many bytes are filled so far, and keep
+calling `read` into the *remaining* slice until the buffer is full or a
+`read` returns `0` (EOF).
+
+Bug 2: `read_line` appends onto whatever is already in its `String`
+argument instead of replacing it — that's how it lets you accumulate a
+line across multiple `Interrupted` retries. Called in a loop on the same
+`line` without clearing it first, every line keeps growing. Add
+`line.clear()` once you're done with each line's contents (after pushing
+it into `lines`, before looping back).
+
+Bug 3: `read_line` returns whatever bytes it found even when the input
+ends without a final `\n` — that's the only way a caller can ever see the
+last line of a file that doesn't end in a newline. Rejecting anything
+without a trailing `\n` throws that last line away. Drop the
+`if !line.ends_with('\n') { break; }` check entirely; `trim_end_matches('\n')`
+already handles both cases (it's a no-op when there's no newline to trim).

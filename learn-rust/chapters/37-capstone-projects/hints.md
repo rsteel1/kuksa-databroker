@@ -59,3 +59,27 @@ I/O and parsing, and pure functions `query` and `tree` write to a `&mut impl Wri
   `downcast_ref::<String>()` recover the message (chapter 14). Disable the
   instance straight away: `AssertUnwindSafe` is only honest if you never
   use the possibly half-updated state again.
+
+## c37_e04_review_kv_server
+Three independent bugs: one in parsing, one in state, one in shutdown.
+
+Bug 1: `match command { "SET" => ..., ... }` matches on `command` exactly
+as the client sent it, but the spec says the command word is
+case-insensitive. Upper-case it first: `match command.to_ascii_uppercase().as_str() { "SET" => ..., ... }`
+— keep using the ORIGINAL `command` (not upper-cased) in the `ERR unknown
+command` message, since the spec says to echo it back as sent.
+
+Bug 2: `let store: Store = Arc::new(Mutex::new(HashMap::new()));` sits
+INSIDE the accept loop, so every new connection gets a brand new, empty
+map — nothing is ever actually shared. Create it once, before the loop,
+and `Arc::clone(&store)` into each spawned connection, the same way every
+gRPC handler shares one `Arc<RwLock<Database>>`.
+
+Bug 3: `handle_connection` has no way to learn that shutdown happened — it
+can only stop when the client sends `QUIT` or closes the connection
+itself. Give it a `broadcast::Receiver<()>` (subscribed BEFORE
+`tokio::spawn`, for the same reason as chapter 31's `spawn_worker`) and
+`tokio::select!` between `lines.next_line()` and `shutdown.recv()` on
+every iteration; have `run` create the `broadcast::channel`, subscribe once
+per accepted connection, and `send(())` after breaking out of the accept
+loop.

@@ -615,6 +615,7 @@ production system; these are trade-offs to recognise, not reasons to sneer.
 | `c17_e06_retry_backoff_circuit_breaker` | Capped exponential backoff, bounded retries, and a circuit breaker, with injected time |
 | `c17_e07_panics_unwinding_poisoning` | `catch_unwind` at a plugin boundary, panic payloads, poisoned-mutex recovery, `#[track_caller]` |
 | `c17_e08_errors_across_boundaries` | `Send + Sync` boxed errors across threads, thread panics as errors, fail-fast vs collect-all |
+| `c17_e09_review_context_and_from` | Review: fix a blanket `From` impl hiding the wrong variant, a swallowed error, and a missing-field check |
 
 ---
 

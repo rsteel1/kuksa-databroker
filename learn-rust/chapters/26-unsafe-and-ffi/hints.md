@@ -111,3 +111,20 @@ plus `try_into()` and `u32::from_le_bytes`, with `offset.checked_add(4)?`
 to avoid overflow (case 4). Two separate `values[i] += 1` statements
 (case 5). `AtomicU64::fetch_add` (case 6). `Iterator::find` plus `map`
 (case 7).
+
+## c26_e08_review_invariant_guards
+Two bugs, both about `SignalPath`'s invariant ("`bytes` is always valid
+UTF-8") not actually being enforced by the methods that are supposed to
+guard it. Neither fix touches `as_str` itself.
+
+Bug 1: `from_bytes` calls `std::str::from_utf8(&bytes)` just to throw the
+result away with `let _ = ...`, so every byte string was accepted,
+including invalid UTF-8. Replace it with `std::str::from_utf8(&bytes)?;`
+so a `Utf8Error` actually stops construction.
+
+Bug 2: `truncate` never checks whether `new_len` lands on a character
+boundary before calling `self.bytes.truncate(new_len)`. Since the
+invariant already guarantees `self.bytes` is valid UTF-8 at this point,
+`self.as_str().is_char_boundary(new_len)` is a fully safe way to check —
+return `Err(NotCharBoundary(new_len))` when it's `false`, before touching
+`self.bytes`.

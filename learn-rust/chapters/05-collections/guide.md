@@ -241,6 +241,8 @@ something is iterating over (borrowing) it. No iterator invalidation, ever.
 | `c05_e04_btreemap_sorted` | sorted VSS paths; range queries for a branch |
 | `c05_e05_indexmap_order` | GetValues with provider fallback, in request order |
 | `c05_e06_retain_cleanup` | E0502, then subscription cleanup with `retain` |
+| `c05_e07_build_subscription_index` | Build: path->subscribers index (HashMap/HashSet/BTreeMap) from a spec |
+| `c05_e08_review_load_cleanup` | Review: find 3 planted bugs (inverted `retain`, stale read, off-by-one) |
 
 ## Further reading
 

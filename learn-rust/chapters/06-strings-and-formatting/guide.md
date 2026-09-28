@@ -346,6 +346,8 @@ that could break this either don't exist (`s[0]`) or panic loudly
 | `c06_e04_formatting_traits` | Derive `Debug`, hand-write `Display`, format specs, `Formatter::pad` |
 | `c06_e05_advanced_patterns` | Slice patterns, `@`, guards, nested destructuring, match ergonomics |
 | `c06_e06_cow_str` | Return borrowed text when nothing changes, owned when it must (the databroker's glob conversion) |
+| `c06_e07_build_path_formatting` | Build: char-safe truncation, formatting, parsing and `Cow` from a spec |
+| `c06_e08_review_log_formatter` | Review: find 3 planted bugs (wrong precision spec, shadowing, off-by-one) |
 
 ## Further reading
 

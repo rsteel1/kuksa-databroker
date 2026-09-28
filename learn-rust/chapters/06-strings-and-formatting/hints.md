@@ -83,3 +83,38 @@ can return `Cow::Borrowed(...)` in every case, with no `to_string()` at all.
 or a "/**" to append. Check both conditions first, and if neither applies,
 `return Cow::Borrowed(input);`. Otherwise build the String as before and
 return `Cow::Owned(out)`.
+
+## c06_e07_build_path_formatting
+No bug to fix — the tests are the spec, and you write every function.
+
+`safe_truncate`: if `s.len() <= max_bytes` there's nothing to do. Otherwise
+walk `end` down from `max_bytes` while `!s.is_char_boundary(end)`, then
+slice `&s[..end]`. `is_char_boundary` is exactly the check that tells you
+whether cutting there would split a character.
+
+`format_row`: one `format!` with named width and precision:
+`format!("{name:>width$}: {value:.2}")`.
+
+`parse_signal_reading`: `input.split_once('=')` gives `Option<(&str, &str)>`;
+turn the `None` case into an `Err` with `.ok_or_else(...)`. Then
+`.trim().parse::<f64>()` on the right-hand side, turning its `Err` into
+your own message with `.map_err(...)`. The `?` operator threads both
+through.
+
+`join_paths_or_default`: `if paths.is_empty() { Cow::Borrowed(default) }
+else { Cow::Owned(paths.join(".")) }`.
+
+## c06_e08_review_log_formatter
+Compare each function's doc comment against what it actually does.
+
+Bug 1 (`format_reading`): `{value:.0}` rounds to a whole number, throwing
+away the decimals the doc comment promises. The spec calls for `{:.2}`.
+
+Bug 2 (`join_readings_skipping_zero`): inside the zero-value branch,
+`let skipped = skipped + 1;` declares a new local that shadows the outer
+counter and is dropped the moment the `if` block ends — the real
+`skipped` never moves. Use `skipped += 1;` instead.
+
+Bug 3 (`last_n_words`): the slice `words[start..words.len() - 1]` always
+excludes the very last word, no matter what `n` is. The upper bound
+should just be `words.len()` (i.e. `words[start..]`).

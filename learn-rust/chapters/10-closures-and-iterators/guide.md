@@ -284,6 +284,8 @@ the iterator form.
 | `c10_e04_collect_results` | Fail-fast collect vs. gather-all-errors like `update_entries` |
 | `c10_e05_custom_iterator` | Implement `Iterator` for an `EntryReadIterator` look-alike |
 | `c10_e06_subscription_matching` | `any`/`all`/`fold`/`chain`/`find`, rewriting the notify matcher |
+| `c10_e07_build_sample_stats` | build: `windows`/`sort_by`/`fold` over a sample stream |
+| `c10_e08_review_sample_pipeline` | review: find and fix 3 bugs — unconsumed adaptor, swallowed error, reversed sort |
 
 ## Further reading
 

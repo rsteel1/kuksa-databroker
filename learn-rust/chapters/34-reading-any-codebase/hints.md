@@ -90,3 +90,24 @@ Part 2 mirrors that code:
   with `to_raw`.
 - `to_raw` maps `Ok(response)` to status 0 with `response.into_inner()`, and
   `Err(status)` to `status.code() as i32` with `status.message()`.
+
+## c34_e06_review_ordered_results
+Two independent bugs, both "used the wrong operation for an ordered
+collection" in a different spot.
+
+Bug 1: `for id in ids.iter().rev()` walks the request list back to front.
+`IndexMap` remembers insertion order, not "sorted" or "correct" order — it
+has no way to know the order should have been `[3, 1, 2]` once you've
+inserted `[2, 1, 3]`. Drop the `.rev()`.
+
+Bug 2: `pending.swap_remove(id)` is the wrong removal for this job.
+`swap_remove` is O(1) *because* it moves the last entry into the freed slot
+instead of shifting everything after it left — which reorders whatever
+used to be last. `shift_remove` is O(n) but leaves every other entry's
+relative order untouched, which is the whole point here. Swap it for
+`pending.shift_remove(id)`.
+
+General lesson: when you're reading (or reviewing) code built on an
+ordered map, always ask which operations that order-sensitive code
+actually calls — `indexmap`'s own docs flag `swap_remove` as
+order-breaking for exactly this reason.

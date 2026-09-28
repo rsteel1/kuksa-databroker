@@ -85,3 +85,38 @@ tried top to bottom, so put the specific ones first:
 `opt.map(|x| ...)` transforms the value inside a `Some` and leaves `None` alone.
 
 `less_than_or_equal`: "not greater than": `self.greater_than(other).map(|g| !g)`.
+
+## c04_e07_build_datavalue_ops
+No bug to fix — the tests are the spec, and you write every method.
+
+`type_name`: one match, one `&'static str` literal per variant.
+
+`as_f64`: `Int(v) => Some(*v as f64)`, `Float(v) => Some(*v)`, anything
+else `None`. (`Bool(_) | Text(_) => None` matches both in one arm.)
+
+`greater_than`: match the *pair* `(self.as_f64(), other.as_f64())`; only
+`(Some(a), Some(b))` gives an answer, `a > b`.
+
+`clamp_numeric` takes `self` by value, so you can move out of it: match
+`self`, and for `Int(v)`/`Float(v)` build a new variant from the clamped
+number (`(v as f64).clamp(min, max) as i64` for `Int`, `v.clamp(min, max)`
+for `Float`); anything else, return it unchanged (`other => other`).
+
+## c04_e08_review_entry_apply
+Compare each function's doc comment against what it actually does.
+
+Bug 1 (`apply`): the doc comment lists three distinct cases, but the
+match only spells out two of them (`None` and `Some(Some(v))`) and lumps
+the third, `Some(None)`, into the trailing `_`. That arm returns
+`NoChange` and never touches `current` — a clear request is silently
+ignored. Add an explicit `Some(None) => { *current = None; ChangeType::Cleared }`
+arm.
+
+Bug 2 (`latest_value`): `0..changes.len().saturating_sub(1)` never visits
+the last index, so the very last change is always ignored. Loop over
+`changes` directly (`for change in changes`) instead of by index.
+
+Bug 3 (`describe_changes`): inside the `Updated` arm,
+`let updates = updates + 1;` declares a brand new local that shadows the
+outer counter and vanishes at the end of the arm — the outer `updates`
+never moves off `0`. Use `updates += 1;` instead.

@@ -37,3 +37,38 @@ For `Snapshot`: keep `#[derive(Debug, Clone)]` and add a second attribute
 `readiness_mechanism`: `if cfg!(target_os = "linux") { "sd_notify" } else { "none" }`.
 Finally put `#[cfg(test)]` above `fake_snapshot`. Try `cargo build -p exercises`
 afterwards (not test): the function simply isn't compiled there.
+
+## c08_e05_build_signal_store_module
+No bug to fix — `mod signals` and the `pub use` re-exports are already
+wired up; you write the method/function bodies.
+
+`record`: check `path.starts_with("Vehicle.")` first and return an `Err`
+if it fails; otherwise push a `Reading { path: path.to_string(), value }`
+and return `Ok(())`.
+
+`snapshot`: `&self.entries` — a `Vec<Reading>` coerces to `&[Reading]`.
+
+`latest`: you want the *last* match, so search from the end:
+`self.entries.iter().rev().find(|r| r.path == path)`.
+
+`debug_dump`: collect `store.snapshot()` into a `Vec<&Reading>`,
+`.sort_by(|a, b| a.path.cmp(&b.path))`, then build the string with one
+`format!("{}={}\n", ...)` push per reading (or `write!` into a
+pre-allocated `String`, as in chapter 6).
+
+## c08_e06_review_module_boundary
+Compare each function's doc comment against what it actually does.
+
+Bug 1 (`segment_count`): `split('.')` already yields one item per
+segment (a string with no dots is still one segment), so subtracting 1
+undercounts every path by one. Drop the `- 1`.
+
+Bug 2 (`register_valid`): `let _ = super::pathing::validate(path);` runs
+the check across the module boundary and then throws the answer away —
+the very next line pushes `path` unconditionally. Only push inside
+`if super::pathing::validate(path).is_ok() { ... }`.
+
+Bug 3 (`rolling_average`): inside the inner loop, `let sum = sum + value;`
+declares a new local that shadows the outer accumulator and disappears at
+the end of that iteration — the outer `sum` never moves off `0.0`. Use
+`sum += value;` instead.

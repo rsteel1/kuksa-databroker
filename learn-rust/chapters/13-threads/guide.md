@@ -248,6 +248,8 @@ time through `Send`/`Sync`.
 | `c13_e03_std_mpsc_channel` | Producers/consumer with `mpsc`; drop the extra sender |
 | `c13_e04_send_sync_providers` | Turn an `Rc`/`RefCell` provider registry into a thread-safe one; `Send + Sync` supertrait |
 | `c13_e05_checkpoint_part1` | **Checkpoint:** parse a log, apply it with worker threads, query a borrowing snapshot |
+| `c13_e06_build_fan_out` | build: a `thread::scope`-based fan-out over chunks |
+| `c13_e07_review_worker_bugs` | review: find and fix 3 bugs — swallowed join result, misindexed results, stale read before join |
 
 ## Further reading
 

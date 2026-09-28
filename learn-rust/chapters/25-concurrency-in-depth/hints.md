@@ -93,3 +93,22 @@ them into one `Vec<R>`.
   `Get` and `Add` carry a reply `Sender`: the actor sends the answer back, and
   the caller creates the reply channel, sends the command and then `recv()`s.
   Store `Mutex::new(Some(tx))` and `Some(handle)` in the struct.
+
+## c25_e08_review_ordering_and_lock_order
+Two independent bugs.
+
+Bug 1: `ready_flag_orderings` returns `(Relaxed, Relaxed)`. A `Relaxed`
+store puts no constraint on the writes made just before it, so a reader
+that sees `ready == true` via a `Relaxed` load has no guarantee it also
+sees the `calls`/`errors` values written earlier in the writer's program
+order. Change the tuple to `(Ordering::Release, Ordering::Acquire)` — that
+pair is exactly what "publish then observe" needs; `calls` and `errors`
+themselves can stay `Relaxed` because the flag's Release/Acquire already
+covers them.
+
+Bug 2: `transfer` locks `from.balance` then `to.balance` — literally the
+order the caller passed them in. A concurrent `transfer(&b, &a, ..)` locks
+the same two mutexes in the opposite order, which is the textbook AB-BA
+deadlock (see `c25_e05_deadlock_and_lock_ordering`). Compare `from.id` and
+`to.id` and always lock the lower id first, then work out which guard is
+`from` and which is `to` before checking funds.

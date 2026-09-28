@@ -109,3 +109,22 @@ A `Vec<String>` interpolates as string literals. In `signal_values`, repeat
 `(#paths, ::std::string::ToString::to_string(&self.#idents))`. Both
 vectors are iterated in lockstep. The full reference is in
 `learn-rust/chapters/18-macros/solution-macros/src/lib.rs`.
+
+## c18_e07_review_macro_hygiene
+Bug 1: read `count_tt!()`'s first arm on its own — an empty invocation
+matches it directly, no recursion involved. If it says `1usize`, then
+"zero items" is already reporting one before any `+ 1usize` from a
+recursive call ever runs. It should be `0usize`.
+
+Bug 2: `smaller_of!($a, $b)` expands `$a` and `$b` as raw expressions
+wherever they appear in the template — once in `$a < $b`, and *again* in
+whichever branch runs. If `$a` is `read_reading(&reads, 3)`, that call
+appears twice in the expanded code and runs twice. Bind each argument to a
+`let` once, at the top of the expansion, and compare/return the bindings
+instead of the raw `$a`/`$b`.
+
+Bug 3: inside `$( ... )*`, every metavariable that's actually part of the
+repetition (here, `$rest`) advances one element per iteration; anything
+else you write is a plain, unchanged value. `path.push_str($first)` inside
+the loop pushes the *same* first segment every time instead of the
+repetition's current element — it should push `$rest`.

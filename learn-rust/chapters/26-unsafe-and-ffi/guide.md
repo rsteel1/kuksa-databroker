@@ -330,6 +330,7 @@ and audited.
 | c26_e05_ffi_call_c | Safe wrappers over glibc `strlen`, `abs`, `qsort` |
 | c26_e06_ffi_expose_rust | A C API over a Rust signal store: handles, `repr(C)`, callbacks, no unwinding into C |
 | c26_e07_ub_catalogue | Name the UB in seven snippets and rewrite each in safe Rust |
+| c26_e08_review_invariant_guards | Review: 2 planted bugs — a validating constructor that skips validation, and a truncate that skips its char-boundary check |
 
 ## Further reading
 

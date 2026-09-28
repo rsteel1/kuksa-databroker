@@ -73,3 +73,40 @@ match start.checked_add(len) {
     _ => &[],
 }
 ```
+
+## c02_e07_build_path_buffer
+No bug to fix — write each function from the spec in the tests.
+
+`push_unique`: `paths.iter().any(|p| p == path)` tells you whether it's
+already there; if not, `paths.push(path.to_string())` and return `true`.
+
+`common_prefix`: split both strings on `'.'` and `.zip()` the two
+iterators; walk it while segments are equal, accumulating the byte length
+of each matched segment plus one (for the `.` that follows). At the end,
+slice `a` up to that length minus one (to drop the trailing separator you
+counted after the last match). Because you only ever borrow from `a`, you
+can return `&'a str` with no allocation.
+
+`dedup_paths`: build a fresh `Vec::new()` and call `push_unique` on it for
+every path in the input, in order.
+
+`take_first`: clamp `n` with `n.min(paths.len())` before slicing, so an
+`n` larger than the buffer can't panic.
+
+## c02_e08_review_reading_buffer
+Compare each function's doc comment against what it actually does.
+
+Bug 1 (`set_reading`): `let mut working = entries.clone();` makes a
+*second*, independent `Vec`. Every mutation after that line changes
+`working`, never `entries` — the caller's buffer is untouched. Drop the
+clone and mutate `entries` directly; `find_index(entries, path)` already
+works on a borrow of it.
+
+Bug 2 (`append_batch`): the function reads `entries.len()` into
+`count_before` *before* the loop that appends the batch, then returns that
+stale count. Move the read to the end: `entries.len()` after the loop.
+
+Bug 3 (`average_of_last`): `entries[entries.len() - take_n..entries.len() - 1]`
+always leaves off the very last entry, no matter what `n` is. The window
+needs to run all the way to `entries.len()`:
+`&entries[entries.len() - take_n..]`.

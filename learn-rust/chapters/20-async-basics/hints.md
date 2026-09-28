@@ -55,3 +55,18 @@ The guard is dropped at the closing `}` — before the `.await`.
 
 Part 2: `tokio::task::spawn_blocking(move || expensive_checksum(&data))`
 returns a `JoinHandle<u64>`; `.await` it and `.expect(...)` the `JoinError`.
+
+## c20_e07_review_blocking_and_concurrency
+Bug 1: `slow_confirm` calls `std::thread::sleep`, not `tokio::time::sleep`.
+`std::thread::sleep` blocks the actual OS thread the task is running on —
+under `start_paused = true` it also completely ignores the virtual clock,
+which is exactly what the test's `start.elapsed() < 10ms` and
+`!handle.is_finished()` assertions catch. Swap it for
+`tokio::time::sleep(delay).await`.
+
+Bug 2: `poll_three_sensors` awaits `read_sensor` three times in a row —
+each `.await` fully finishes before the next one even starts, so the
+delays add up. `tokio::join!(read_sensor(..), read_sensor(..), read_sensor(..))`
+starts all three at once and waits for the slowest, so under a paused
+clock the whole call only advances virtual time by one delay, which is
+what the second test measures.

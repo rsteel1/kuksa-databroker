@@ -400,6 +400,7 @@ handler can't accidentally return the wrong message type.
 | `c30_e04_status_codes` | Domain errors → `tonic::Status` and in-stream `proto::Error` |
 | `c30_e05_request_extensions_interceptor` | A tonic `Interceptor`: metadata → extensions |
 | `c30_e06_call_val_service_directly` | Call the real `Val::publish_value` / `get_value` on `DataBroker` |
+| `c30_e07_review_proto_field_mapping` | Review: 3 planted bugs — swapped enum variants, a value in the wrong `oneof` field, a narrowing cast |
 
 ## Further reading
 

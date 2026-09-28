@@ -315,6 +315,8 @@ null, so no null-pointer crashes.
 | `c04_e04_option` | `unwrap_or`, `?` on Option, `let ... else`, `if let` |
 | `c04_e05_option_option_tristate` | Apply keep / clear / set updates like `Entry::apply` |
 | `c04_e06_match_on_tuples` | Compare mixed numeric variants like `greater_than` |
+| `c04_e07_build_datavalue_ops` | Build: `DataValue` methods (type name, widening, compare, clamp) from a spec |
+| `c04_e08_review_entry_apply` | Review: find 3 planted bugs (wildcard trap, off-by-one, shadowing) |
 
 ## Further reading
 

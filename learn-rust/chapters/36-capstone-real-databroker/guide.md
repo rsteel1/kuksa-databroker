@@ -229,6 +229,7 @@ streaming RPCs they build a `tonic::Streaming` from encoded frames with
 | `c36_e03_permissions_denied` | build `Permissions`, observe denied/expired on every path |
 | `c36_e04_implement_signal_provider` | implement the real trait, register it, watch `get_values_broker` fall back |
 | `c36_e05_grpc_get_values_end_to_end` | call `Val::publish_value`/`get_values` with protobuf messages and check status codes |
+| `c36_e06_review_signal_provider` | Review: 3 planted bugs against the real `databroker` crate — availability tied to call count, an inverted fallback rule, ids sorted before the request |
 
 ## Further reading
 

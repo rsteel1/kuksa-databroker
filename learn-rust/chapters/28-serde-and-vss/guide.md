@@ -322,6 +322,7 @@ Try it: `data/vss-core/` contains real VSS files. Open one and find
 | `c28_e03_enum_representations` | `rename_all`, per-variant renames, untagged order |
 | `c28_e04_serde_json_value` | Late typing with `from_value::<T>`, range checks, `From` for errors |
 | `c28_e05_flatten_vss_tree` | Recursive tree → sorted `BTreeMap` of dotted paths |
+| `c28_e06_review_entry_attributes` | Review: 3 planted bugs — a wrong `rename` key, a wrong `default` value, and a wrong-case enum rename |
 
 ## Further reading
 

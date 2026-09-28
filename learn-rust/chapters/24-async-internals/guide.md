@@ -414,6 +414,7 @@ In the wild (crate sources are under `~/.cargo/registry/src/index.crates.io-*/`)
 | `c24_e06_cancellation_and_drop` | RAII under cancellation, cancellation-safe reads, `JoinError` |
 | `c24_e07_tower_service` | A tower `Service` and an auth `Layer`; layer order |
 | `c24_e08_checkpoint_part3` | Checkpoint: a bounded, deadline-limited, shutdown-aware fan-out |
+| `c24_e09_review_waker_storage` | Review: 2 planted bugs — a future that never stores its waker, and a signal that never wakes it |
 
 ## Further reading
 

@@ -320,6 +320,7 @@ held too long. Those are design responsibilities.
 | `c21_e06_snapshot_then_await` | Reproduce and fix the e1fdfd1 freeze |
 | `c21_e07_deadline_budget` | One deadline shared by send and receive |
 | `c21_e08_watch_latest_value` | Latest-value state with coalescing; `wait_for`; sender-dropped handling |
+| `c21_e09_review_shutdown_and_joinhandle` | Review: fix a dropped `JoinHandle` and a shutdown branch that skips draining queued work |
 
 ## Further reading
 

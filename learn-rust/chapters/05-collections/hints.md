@@ -55,3 +55,39 @@ Use `self.subscriptions.retain(|id, sub| { ... keep })`: the closure returns
 declared before the call (the closure borrows it mutably). Sort before returning.
 `drop_unavailable` is the same with `Vec::retain(|p| ...)`, which keeps the
 original order of survivors — push `p.name.clone()` for the ones you drop.
+
+## c05_e07_build_subscription_index
+No bug to fix — the tests are the spec, and you write every function.
+
+`subscribe`: `index.entry(path.to_string()).or_default().insert(id);` —
+`or_default()` needs `HashSet<u32>: Default`, which it has.
+
+`unsubscribe`: `get_mut(path)` gives you `Option<&mut HashSet<u32>>`;
+inside the `Some` arm, `remove(&id)` then check `is_empty()` and, if so,
+`index.remove(path)` (this second removal is on `index`, not on the set
+you just emptied — you can't hold both borrows at once, so do it as two
+separate statements/expressions after the `if let` block ends, or check
+`is_empty()` and remove in one `if let` scope that ends before you touch
+`index` again).
+
+`matching_subscribers`: start with `HashSet::new()`, and for each
+requested path that's in `index`, `result.extend(subscribers.iter().copied())`.
+
+`path_load`: `index.iter().map(|(k, v)| (k.clone(), v.len())).collect()`
+into a `BTreeMap` — collecting into a `BTreeMap` sorts by key for free.
+
+## c05_e08_review_load_cleanup
+Compare each function's doc comment against what it actually does.
+
+Bug 1 (`cleanup_dead_receivers`): `retain(|_, count| *count == 0)` KEEPS
+whatever the closure returns `true` for. The doc comment wants dead
+(`0`) entries *removed*, so the kept predicate must be `*count != 0`.
+
+Bug 2 (`subscribe_and_count`): `existing` is read before the `insert`
+and returned unchanged — that's the count *before* this subscription,
+one short of what the doc comment promises. Look the count up again
+after inserting.
+
+Bug 3 (`top_n_loaded`): `entries[..n - 1]` is one short of `entries[..n]`
+(and panics outright if `n` is `0`, since `n - 1` underflows on `usize`).
+Clamp `n` to `entries.len()` first, then slice up to that.

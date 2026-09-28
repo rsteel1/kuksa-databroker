@@ -103,3 +103,23 @@ struct, moving each field across and setting `state: PhantomData`.
 
 `build` only exists in `impl SubscribeBuilder<HasSignals>`. Move the three
 fields into a `SubscribeRequest`.
+
+## c14_e09_build_typed_cell
+`new`/`set`: `Box::new(value)` (as `Box<dyn Any>`, inferred from the field
+type). `get`: `self.value.downcast_ref::<T>()` — that's the whole body.
+`first_of_type`: `values.iter().find_map(|v| v.downcast_ref::<T>())`.
+Nothing here needs `unsafe` or a match on a type tag; `downcast_ref`
+already does the concrete-type check for you.
+
+## c14_e10_review_trait_bugs
+Three independent bugs:
+- `Sensor` has both an inherent `describe` and a trait `describe`. Calling
+  `sensor.describe()` on the concrete type always picks the inherent one —
+  that's a hard rule, not a bug you can work around by writing the trait
+  impl differently. Delete the inherent method.
+- `impl Borrow<str> for Path`: `borrow` returns `""` unconditionally.
+  `HashMap::get` uses exactly what `borrow()` returns to compare against
+  the query key, so it must be `&self.0`.
+- `double_if_i64`: `downcast_mut::<i32>()` never matches a boxed `i64` —
+  `downcast_mut`/`downcast_ref` check the *exact* concrete type, with no
+  numeric widening. Use `downcast_mut::<i64>()`.

@@ -71,3 +71,26 @@ which auto-derefs to `&str`.
 - `total_path_len`: `fold(0, |acc, p| acc + p.len())`.
 - `first_with_prefix`: `primary.iter().chain(fallback).find(...)` yields an
   `Option<&&str>`; `.copied()` turns it into `Option<&str>`.
+
+## c10_e07_build_sample_stats
+`moving_average`: `samples.windows(window).map(|w| w.iter().map(|s|
+s.value).sum::<f64>() / window as f64).collect()`, with an early empty-`Vec`
+return when `window == 0 || samples.len() < window`. `top_n_by`: collect
+`&Sample` references, `sort_by` comparing `key(b)` against `key(a)` (that's
+what makes it descending — sort_by is stable, so ties keep their order),
+then `truncate(n)`. `group_sum`: `fold(HashMap::new(), |mut acc, s| {
+*acc.entry(s.path.clone()).or_insert(0.0) += s.value; acc })`.
+
+## c10_e08_review_sample_pipeline
+Three separate bugs:
+- `tag_low_battery`: the chain ends in `.map(...)` and the result is never
+  bound or consumed — iterators are lazy, so nothing inside the closure
+  ever runs. Rustc even warns about this (`unused_must_use`). Swap `map`
+  for `for_each`.
+- `parse_all`: `filter_map(...).ok()` quietly throws bad entries away. Use
+  `.map(|s| s.parse().map_err(|_| ...))` and `.collect::<Result<Vec<_>,
+  _>>()` so the first error short-circuits the whole thing (the same shape
+  as chapter 7's `?` and `From` conversions).
+- `sorted_paths_by_value_desc`: compare `a` against `b` gives ascending
+  order; the function promises descending. Swap the operands in the
+  `partial_cmp` call.

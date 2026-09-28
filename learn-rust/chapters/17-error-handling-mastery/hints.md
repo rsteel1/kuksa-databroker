@@ -130,3 +130,24 @@ Fail-fast is `.map(|s| s.parse()).collect()` into
 `Result<Vec<u32>, _>`. To report every error, map each item to
 `Result<u32, (usize, ParseIntError)>`, then `.partition(Result::is_ok)`, then
 unwrap each side with `flatten()` (for the `Ok`s) and `filter_map(Result::err)`.
+
+## c17_e09_review_context_and_from
+Three functions, three fields, one shared `impl From<ParseIntError>`. Ask:
+does that single conversion know which field called it?
+
+Bug 1: `parse_port` and `parse_timeout_ms` both hit `?` on a
+`ParseIntError`, and both go through the same `From` impl, which always
+builds `ConfigError::InvalidTimeout`. One `From` impl can't know which field
+it's converting for. Replace it with an explicit `.map_err(ConfigError::InvalidPort)`
+/ `.map_err(ConfigError::InvalidTimeout)` at each call site — `map_err`
+still keeps the original `ParseIntError` as the `#[source]`.
+
+Bug 2: `unwrap_or(0)` never produces an `Err`, so `parse_retries` can't
+fail — a typo'd retry count quietly becomes zero retries. Use
+`.map_err(ConfigError::InvalidRetries)` like the other two fields, so `?`
+in `load_settings` actually propagates it.
+
+Bug 3: an empty string parses via `str::parse` as `ParseIntError::Empty` —
+which currently looks just like a bad number to the caller. Check
+`raw.is_empty()` first in each `parse_*` function and return
+`ConfigError::MissingField("<name>".into())` before calling `.parse()`.

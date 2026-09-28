@@ -79,3 +79,21 @@ up with `self.ids.get(path)`: `Arc<str>` implements `Borrow<str>`, so a
 Otherwise `let shared: Arc<str> = Arc::from(path);`, push a clone into
 `paths`, insert a clone into `ids`, and return it. `fan_out` maps
 `0..subscribers` to `Notification { path: Arc::clone(path), value }`.
+
+## c15_e08_build_calibration_pipeline
+`Pipeline::new`: `Pipeline { stages }`. `run` (both structs): `self.stages
+.iter().fold(input, |value, stage| stage(value))` — `fold`'s accumulator
+*is* the running value, and `stage` is callable whether it's a `fn` item or
+a boxed closure. `DynPipeline::add_stage`: `self.stages.push(Box::new(stage))`.
+
+## c15_e09_review_layout_bugs
+Three independent bugs:
+- `average`: divides by a literal `10.0` instead of `N as f64`. `N` is in
+  scope as a plain value inside the function body.
+- `Window::push`: the guard `if self.len <= N` lets `len` reach `N + 1`.
+  Walk `push` by hand for a `Window<3>` fed 4 values and watch `len` grow
+  past 3. It should be `<`.
+- `Interner::intern`: it builds a brand-new `Rc::from(text)` every call
+  and never looks in `self.cache` first, so nothing is ever deduplicated.
+  Check `self.cache.get(text)` and return a clone of that before falling
+  through to allocating a new one.

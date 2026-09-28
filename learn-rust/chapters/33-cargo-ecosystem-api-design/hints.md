@@ -97,3 +97,24 @@ depth 1.
 `first_chain`: output is depth-first, so the first child of any line is simply
 the next line if it's exactly one level deeper. Walk forward while
 `depth == expected` and increase `expected` each time.
+
+## c33_e06_review_semver_and_api_naming
+Three independent bugs, one per test.
+
+Bug 1: `AddPublicFieldToStructWithOnlyPublicFields => Bump::Minor` is wrong.
+Compare it with plain `AddPublicItem`: adding a new function or type never
+breaks existing code, but adding a field to a struct every one of whose
+fields is already public means every `Struct { a, b }` literal callers
+wrote now fails to compile (it's missing the new field) — that's Major.
+The rule flips once the struct already has a private field, because then
+nobody outside the crate could write that literal in the first place.
+
+Bug 2: `(self.0 as i32) > (other.0 as i32)`. `self.0` is a `u32`; `as i32`
+doesn't scale the value, it reinterprets the same 32 bits as signed, so any
+packed version whose bits look negative as `i32` (roughly major ≥ 2147)
+compares as *smaller* than it should. There was never a sign to fix here —
+drop both casts and compare `self.0 > other.0` as the `u32`s they are.
+
+Bug 3: `format!("{}.{}", self.major(), self.minor())` only has two
+placeholders; the doc comment above it promises `MAJOR.MINOR.PATCH`. Add
+the third placeholder and `self.patch()`.

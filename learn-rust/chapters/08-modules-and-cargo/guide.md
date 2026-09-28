@@ -302,6 +302,8 @@ type's invariants can only be broken by code in the same module.
 | `c08_e02_use_paths_and_reexports` | fix `use` paths with `crate::`/`super::`; add `pub use` |
 | `c08_e03_visibility_pub_crate` | `pub(super)` vs `pub(crate)` |
 | `c08_e04_cfg_attributes` | `#[cfg]`, `cfg!`, `#[cfg_attr]`, test-only code |
+| `c08_e05_build_signal_store_module` | Build: a module with `pub use` re-exports and a small store, from a spec |
+| `c08_e06_review_module_boundary` | Review: find 3 planted bugs (off-by-one, swallowed `Result` at a module boundary, shadowing) |
 
 ## Further reading
 

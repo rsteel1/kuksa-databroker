@@ -59,3 +59,16 @@ Set up `let deadline = Instant::now() + DEADLINE;` and a helper closure
 4. `loop`: `timeout(remaining(), inbox.recv())` → two layers again (timeout;
    then `RecvError::Closed`/`Lagged`). `continue` on a wrong `request_id`;
    otherwise filter `entries` to the requested ids and return `Err(())` if empty.
+
+## c23_e06_review_concurrent_and_bounded
+Bug 1: `for provider in providers { results.push(provider.value().await); }`
+awaits each future to completion before creating the next one, so nothing
+ever overlaps. Build every provider's future first (`providers.iter().map(|p| p.value())`)
+and hand the whole collection to `join_all` — that's what starts them all
+running at once.
+
+Bug 2: a `SemaphorePermit` only limits concurrency for as long as it's
+alive; dropping it right after `acquire().await` (before the guarded work
+even starts) means the "limit" governs nothing. Keep the `permit` binding
+alive across the `provider.value().await` call — drop it (explicitly, or
+just by letting it fall out of scope) only after that call finishes.

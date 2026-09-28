@@ -57,3 +57,16 @@ limit **before** allocating `vec![0; len as usize]`.
 Take the reader out of the state with `let mut reader = state?;`. Return
 `Some((item, next_state))` to yield, and `None` to finish. After an error,
 make the next state `None` so the stream ends.
+
+## c22_e07_review_unpolled_streams
+Bug 1: `if let Some(value) = source.next().await` runs its body once and
+falls straight through — it's an `if`, not a loop, so `source` only gets
+polled a single time no matter how many values are left in it. Change it
+to `while let`.
+
+Bug 2: `ReceiverStream::new(rx)` is built inside `{ ... }`, and the block
+ends without ever calling `.next()` on it — a stream (like a future) does
+nothing at all until something drives it, so it's dropped having never
+been polled once. Move the stream out of that block and drain it with a
+`while let Some(value) = stream.next().await` loop that pushes into
+`items`.

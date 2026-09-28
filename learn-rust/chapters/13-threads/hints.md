@@ -60,3 +60,22 @@ Strategy, not code. Build it in the order the tests are listed:
    A branch match is "equal, or starts with the prefix and the next byte is `.`".
    Bonus: `BTreeMap::range` with `Bound::Included(prefix)` skips straight to
    the first candidate, and `take_while` stops at the end of the branch.
+
+## c13_e06_build_fan_out
+`fan_out_map`: early-return `Vec::new()` on empty input; otherwise
+`chunk_len = items.len().div_ceil(num_workers.max(1))`, then
+`items.chunks(chunk_len).map(|chunk| scope.spawn(|| chunk.iter().map(&f).collect::<Vec<R>>())).collect::<Vec<_>>()`
+inside `thread::scope(|scope| { ... })`, then join every handle and
+`flat_map` the per-chunk `Vec<R>`s into one. `count_exceeding`: call your
+own `fan_out_map`, mapping each reading to `usize::from(r > threshold)`,
+then `.into_iter().sum()`.
+
+## c13_e07_review_worker_bugs
+Three independent bugs, one per function:
+- `all_pass`: `let _ = handle.join();` throws the `Result` away. Track an
+  `all_ok` bool, set it `false` whenever `handle.join().is_err()`.
+- `parallel_squares`: `results[(i + 1) % len] = ...` writes to the wrong
+  slot. It should just be `results[i]`.
+- `total_after_increment`: the snapshot is taken before any worker thread
+  even starts. Move the read of `counter` to the very end, after every
+  handle has been joined.
